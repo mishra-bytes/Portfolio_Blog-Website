@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #050507;
+  --color-foreground: #f5f3f4;
+  --color-panel: #0b0b10;
+  --color-panel-strong: #120f14;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-muted: #aea8b5;
+  --color-accent: #ff4d5a;
+  --color-accent-soft: #ff9a84;
+  --color-accent-glow: rgba(255, 77, 90, 0.25);
+  --font-sans: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "Cascadia Code", monospace;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(120, 10, 18, 0.18), transparent 28%),
+    linear-gradient(180deg, #07070a 0%, #040406 48%, #020203 100%);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+a {
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+::selection {
+  background: rgba(255, 77, 90, 0.32);
+  color: #fff7f7;
+}
+
+.grid-overlay {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-position: center;
+  background-size: 40px 40px;
+}
+
+.section-shell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+    rgba(8, 8, 12, 0.88);
+  box-shadow:
+    0 12px 50px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.section-shell::before {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(255, 77, 90, 0.08), transparent 30%),
+    linear-gradient(315deg, rgba(255, 154, 132, 0.06), transparent 25%);
+  content: "";
+  pointer-events: none;
+}
+
+.markdown {
+  color: #e7e3e6;
+}
+
+.markdown > * + * {
+  margin-top: 1rem;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  color: #fff7f7;
+  letter-spacing: -0.03em;
+}
+
+.markdown h1 {
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 1.05;
+}
+
+.markdown h2 {
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  margin-top: 2rem;
+}
+
+.markdown h3 {
+  font-size: 1.15rem;
+}
+
+.markdown p,
+.markdown li {
+  color: #d1ccd3;
+  line-height: 1.85;
+}
+
+.markdown ul,
+.markdown ol {
+  padding-left: 1.25rem;
+}
+
+.markdown blockquote {
+  border-left: 3px solid rgba(255, 77, 90, 0.6);
+  background: rgba(255, 77, 90, 0.06);
+  border-radius: 0 1rem 1rem 0;
+  padding: 1rem 1.25rem;
+}
+
+.markdown pre {
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  background: #0b0910;
+  padding: 1rem;
+}
+
+.markdown code {
+  font-family: var(--font-mono);
+}
+
+.markdown :not(pre) > code {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.15rem 0.35rem;
+  color: #fff4f2;
+}
+
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+.markdown th,
+.markdown td {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.markdown th {
+  background: rgba(255, 255, 255, 0.06);
+}

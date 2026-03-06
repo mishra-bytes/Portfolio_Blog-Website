@@ -1,3 +1,8 @@
+import {
+  MotionReveal,
+  MotionStagger,
+  MotionStaggerItem,
+} from "@/components/motion/reveal";
 import { ProjectCard } from "@/components/projects/project-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { projects, publication } from "@/data/portfolio";
@@ -9,22 +14,26 @@ export function ProjectsSection() {
       className="section-shell rounded-[2rem] px-6 py-12 sm:px-10 lg:px-14"
     >
       <div className="relative z-10 space-y-10">
-        <SectionHeading
-          eyebrow="Projects"
-          title="Applied machine learning across vision, ranking, automation, and IoT."
-          description="A selected set of projects focused on measurable outcomes, careful optimization, and real-world system constraints."
-        />
-        <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+        <MotionReveal>
+          <SectionHeading
+            eyebrow="Projects"
+            title="Applied machine learning across vision, ranking, automation, and IoT."
+            description="A selected set of projects focused on measurable outcomes, careful optimization, and real-world system constraints."
+          />
+        </MotionReveal>
+        <MotionStagger className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
           {projects.map((project) => (
-            <ProjectCard
-              key={project.title}
-              title={project.title}
-              summary={project.summary}
-              tags={project.tags}
-            />
+            <MotionStaggerItem key={project.title}>
+              <ProjectCard
+                title={project.title}
+                summary={project.summary}
+                tags={project.tags}
+              />
+            </MotionStaggerItem>
           ))}
-        </div>
-        <div className="rounded-[1.75rem] border border-accent/30 bg-[linear-gradient(135deg,rgba(255,77,90,0.14),rgba(255,255,255,0.03))] p-6 shadow-[0_0_40px_rgba(255,77,90,0.12)]">
+        </MotionStagger>
+        <MotionReveal>
+          <div className="rounded-[1.75rem] border border-accent/30 bg-[linear-gradient(135deg,rgba(255,77,90,0.14),rgba(255,255,255,0.03))] p-6 shadow-[0_0_40px_rgba(255,77,90,0.12)]">
           <p className="text-xs uppercase tracking-[0.35em] text-accent-soft">
             Publication Highlight
           </p>
@@ -44,7 +53,8 @@ export function ProjectsSection() {
               Research + Optimization
             </span>
           </div>
-        </div>
+          </div>
+        </MotionReveal>
       </div>
     </section>
   );

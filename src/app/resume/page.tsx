@@ -28,7 +28,7 @@ export default function ResumePage() {
             </div>
             <Link
               href="/resume/aditya-mishra-resume.pdf"
-              className="w-fit rounded-full border border-accent bg-accent px-6 py-3 text-sm font-semibold text-white shadow-[0_0_30px_var(--color-accent-glow)] hover:-translate-y-0.5 hover:bg-[#ff5a66]"
+              className="w-fit rounded-full border border-accent bg-accent px-6 py-3 text-sm font-semibold text-white shadow-[0_0_30px_var(--color-accent-glow)] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:scale-[1.02] hover:bg-[#ff5a66] hover:shadow-[0_0_38px_var(--color-accent-glow)]"
             >
               Download PDF
             </Link>

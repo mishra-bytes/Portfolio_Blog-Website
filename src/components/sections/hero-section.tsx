@@ -1,3 +1,4 @@
+import { HeroSpores } from "@/components/decor/hero-spores";
 import Link from "next/link";
 import { MotionReveal, MotionStagger, MotionStaggerItem } from "@/components/motion/reveal";
 import { highlights } from "@/data/portfolio";
@@ -5,12 +6,13 @@ import { highlights } from "@/data/portfolio";
 export function HeroSection() {
   return (
     <section className="section-shell grid-overlay rounded-[2rem] px-6 py-14 sm:px-10 sm:py-16 lg:grid lg:grid-cols-[1.35fr_0.65fr] lg:gap-10 lg:px-14">
+      <HeroSpores />
       <MotionReveal className="relative z-10 max-w-3xl space-y-8">
         <div className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.3em] text-zinc-200">
           Machine Learning Portfolio
         </div>
         <div className="space-y-6">
-          <h1 className="max-w-4xl text-4xl font-semibold tracking-[-0.06em] text-white sm:text-5xl lg:text-7xl">
+          <h1 className="upside-title hero-title max-w-4xl text-4xl font-semibold tracking-[-0.06em] text-white sm:text-5xl lg:text-7xl">
             Aditya Mishra | Machine Learning &amp; Computer Vision Engineer
           </h1>
           <p className="max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">

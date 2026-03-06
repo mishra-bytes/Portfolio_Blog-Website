@@ -14,14 +14,14 @@ type MotionStaggerProps = {
   className?: string;
 };
 
-const revealEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const revealEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const revealItem: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 18 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.45, ease: revealEase },
+    transition: { duration: 0.5, ease: revealEase },
   },
 };
 
@@ -29,7 +29,7 @@ const staggerContainer: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.08,
+      staggerChildren: 0.09,
       delayChildren: 0.04,
     },
   },
@@ -45,12 +45,12 @@ export function MotionReveal({
   const variants = shouldReduceMotion
     ? undefined
     : {
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, y: 18 },
         visible: {
           opacity: 1,
           y: 0,
           transition: {
-            duration: 0.45,
+            duration: 0.5,
             ease: revealEase,
             delay,
           },

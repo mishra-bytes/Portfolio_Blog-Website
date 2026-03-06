@@ -21,9 +21,9 @@ export function ProjectsSection() {
             description="A selected set of projects focused on measurable outcomes, careful optimization, and real-world system constraints."
           />
         </MotionReveal>
-        <MotionStagger className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+        <MotionStagger className="grid items-stretch gap-4 md:gap-5 lg:grid-cols-2 xl:grid-cols-3">
           {projects.map((project) => (
-            <MotionStaggerItem key={project.title}>
+            <MotionStaggerItem key={project.title} className="h-full">
               <ProjectCard
                 title={project.title}
                 summary={project.summary}

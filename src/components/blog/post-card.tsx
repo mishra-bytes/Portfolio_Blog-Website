@@ -7,7 +7,7 @@ type PostCardProps = {
 
 export function PostCard({ post }: PostCardProps) {
   return (
-    <article className="rounded-[1.5rem] border border-white/10 bg-panel-strong/80 p-6">
+    <article className="flex h-full flex-col rounded-[1.5rem] border border-white/10 bg-panel-strong/80 p-6">
       <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.25em] text-accent-soft">
         <span>{post.date}</span>
         <span className="h-1 w-1 rounded-full bg-accent-soft" />

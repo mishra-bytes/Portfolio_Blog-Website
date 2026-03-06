@@ -12,7 +12,7 @@ export function AboutSection() {
       id="about"
       className="section-shell rounded-[2rem] px-6 py-12 sm:px-10 lg:px-14"
     >
-      <div className="relative z-10 grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="relative z-10 grid gap-8 md:gap-10 lg:grid-cols-[1.05fr_0.95fr]">
         <MotionReveal className="space-y-8">
           <SectionHeading
             eyebrow="About"
@@ -31,10 +31,10 @@ export function AboutSection() {
             </p>
           </div>
         </MotionReveal>
-        <MotionStagger className="grid gap-4">
+        <MotionStagger className="grid items-stretch gap-4 md:gap-5">
           {experience.map((item) => (
-            <MotionStaggerItem key={item.title}>
-              <article className="rounded-[1.5rem] border border-white/10 bg-panel-strong/80 p-5">
+            <MotionStaggerItem key={item.title} className="h-full">
+              <article className="flex h-full flex-col rounded-[1.5rem] border border-white/10 bg-panel-strong/80 p-5">
                 <p className="text-xs uppercase tracking-[0.35em] text-accent-soft">
                   {item.organization}
                 </p>
@@ -53,10 +53,10 @@ export function AboutSection() {
         <p className="text-xs font-semibold uppercase tracking-[0.35em] text-accent-soft">
           Skills
         </p>
-        <MotionStagger className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <MotionStagger className="mt-5 grid items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {skills.map((skill) => (
-            <MotionStaggerItem key={skill}>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] px-4 py-4 text-sm font-medium text-zinc-200">
+            <MotionStaggerItem key={skill} className="h-full">
+              <div className="flex h-full items-center rounded-2xl border border-white/10 bg-white/[0.025] px-4 py-4 text-sm font-medium text-zinc-200">
                 {skill}
               </div>
             </MotionStaggerItem>

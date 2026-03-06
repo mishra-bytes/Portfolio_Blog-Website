@@ -17,10 +17,10 @@ export function ResumeSection() {
             title="A dedicated CV view with a direct download path."
             description="The resume page presents your academic background, leadership, and selected experience in a structured layout, with a prominent PDF download action for recruiters and collaborators."
           />
-          <MotionStagger className="grid gap-3 sm:grid-cols-2">
+          <MotionStagger className="grid items-stretch gap-3 sm:grid-cols-2">
             {resumePoints.map((point) => (
-              <MotionStaggerItem key={point}>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 text-sm text-zinc-200">
+              <MotionStaggerItem key={point} className="h-full">
+                <div className="flex h-full items-center rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 text-sm text-zinc-200">
                   {point}
                 </div>
               </MotionStaggerItem>

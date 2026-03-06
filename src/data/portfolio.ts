@@ -18,6 +18,11 @@ export const highlights = [
   "Process dynamics",
 ] as const;
 
+export const profileImage = {
+  src: "/imagery/aditya-headshot-placeholder.svg",
+  alt: "Portrait placeholder for Aditya Mishra professional headshot",
+} as const;
+
 export const experience = [
   {
     title: "ML Engineer Intern",
@@ -46,6 +51,29 @@ export const skills = [
   "Computer Vision",
   "Deep Learning",
   "Process Control",
+] as const;
+
+export const lifeLeadershipSlides = [
+  {
+    src: "/imagery/ieee-chairperson-moment.svg",
+    alt: "Speaking at an IEEE NSUT event as Chairperson",
+    caption: "Speaking as IEEE NSUT Chairperson during a student leadership event.",
+  },
+  {
+    src: "/imagery/imd-vision-work.svg",
+    alt: "Computer vision work session at IMD",
+    caption: "Working on IoT and computer vision pipelines connected to IMD use cases.",
+  },
+  {
+    src: "/imagery/recommendation-engine-session.svg",
+    alt: "Late-night iteration on recommendation system experiments",
+    caption: "Iterating on ranking experiments for the Zomato recommendation engine.",
+  },
+  {
+    src: "/imagery/ev-battery-research-presentation.svg",
+    alt: "Presenting EV battery state-of-charge research",
+    caption: "Presenting my EV battery research and modeling results.",
+  },
 ] as const;
 
 export const projects = [

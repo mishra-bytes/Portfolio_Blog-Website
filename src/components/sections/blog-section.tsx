@@ -25,9 +25,9 @@ export function BlogSection({ posts }: BlogSectionProps) {
             Browse all posts
           </Link>
         </MotionReveal>
-        <MotionStagger className="grid gap-5 lg:grid-cols-2">
+        <MotionStagger className="grid items-stretch gap-4 md:gap-5 lg:grid-cols-2">
           {posts.map((post) => (
-            <MotionStaggerItem key={post.slug}>
+            <MotionStaggerItem key={post.slug} className="h-full">
               <PostCard post={post} />
             </MotionStaggerItem>
           ))}

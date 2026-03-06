@@ -5,11 +5,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Aditya Mishra | Machine Learning Portfolio",
+    default: "Aditya Mishra | Portfolio",
     template: "%s | Aditya Mishra",
   },
   description:
-    "Machine Learning and Computer Vision portfolio featuring projects, technical writing, and resume details for Aditya Mishra.",
+    "Portfolio, resume details, projects, and technical writing for Aditya Mishra.",
 };
 
 export default function RootLayout({

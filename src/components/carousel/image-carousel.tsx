@@ -90,7 +90,7 @@ export function ImageCarousel({ slides }: ImageCarouselProps) {
           aria-label="Previous slide"
         >
           <span aria-hidden="true" className="text-lg leading-none">
-            ←
+            {"<"}
           </span>
         </button>
         <button
@@ -100,7 +100,7 @@ export function ImageCarousel({ slides }: ImageCarouselProps) {
           aria-label="Next slide"
         >
           <span aria-hidden="true" className="text-lg leading-none">
-            →
+            {">"}
           </span>
         </button>
       </div>

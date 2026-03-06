@@ -6,16 +6,49 @@ export const navLinks = [
   { label: "Resume", href: "/resume" },
 ] as const;
 
-export const socialLinks = [
-  { label: "GitHub", href: "https://github.com/" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/" },
-  { label: "Email", href: "mailto:adityamishra@example.com" },
+export const contactItems = [
+  {
+    label: "Email",
+    value: "aditya.mishra.ug23@nsut.ac.in",
+    href: "mailto:aditya.mishra.ug23@nsut.ac.in",
+  },
+  {
+    label: "Phone",
+    value: "+91-8826490096",
+    href: "tel:+918826490096",
+  },
+  {
+    label: "LinkedIn",
+    value: "LinkedIn",
+    href: undefined,
+  },
+  {
+    label: "GitHub",
+    value: "GitHub",
+    href: undefined,
+  },
 ] as const;
 
-export const highlights = [
-  "Predictive modeling",
-  "Computer vision",
-  "Process dynamics",
+export const heroContent = {
+  name: "Aditya Mishra",
+  location: "New Delhi, India",
+  summary:
+    "B. Tech, Instrumentation & Control Engineering at Netaji Subhas University of Technology (2023-2027), focused on machine learning, computer vision, and real-time inference systems.",
+} as const;
+
+export const heroHighlights = [
+  {
+    title: "Languages",
+    description: "Python, SQL, MATLAB, Java",
+  },
+  {
+    title: "Machine Learning",
+    description: "TensorFlow, Keras, scikit-learn, XGBoost, SHAP, OpenCV",
+  },
+  {
+    title: "Deployment & IoT",
+    description: "FastAPI, Streamlit, Raspberry Pi, MQTT",
+  },
 ] as const;
 
 export const profileImage = {
@@ -23,102 +56,155 @@ export const profileImage = {
   alt: "Portrait placeholder for Aditya Mishra professional headshot",
 } as const;
 
-export const experience = [
+export const education = [
   {
-    title: "ML Engineer Intern",
-    organization: "InnerGize",
-    description:
-      "Built model workflows and experimentation pipelines focused on production-minded machine learning delivery.",
+    title: "B. Tech, Instrumentation & Control Engineering",
+    organization: "Netaji Subhas University of Technology",
+    period: "2023-2027",
+    detail: "CGPA: 7.4",
   },
   {
-    title: "Computer Vision for IoT Systems",
-    organization: "Indian Meteorological Department",
-    description:
-      "Worked on sensor-linked vision systems to digitize physical readings and support applied monitoring workflows.",
-  },
-  {
-    title: "Chairperson",
-    organization: "IEEE NSUT Student Branch",
-    description:
-      "Led student initiatives, technical events, and cross-functional collaboration around emerging engineering topics.",
+    title: "Senior Secondary (CBSE)",
+    organization: "The Mother's International School",
+    period: "Graduated 2022",
+    detail: undefined,
   },
 ] as const;
 
-export const skills = [
-  "Python",
-  "C++",
-  "MATLAB",
-  "Computer Vision",
-  "Deep Learning",
-  "Process Control",
+export const experience = [
+  {
+    title: "ML Engineer Intern",
+    organization: "DUSQ (formerly InnerGize)",
+    period: "Nov 2025-Present",
+    bullets: [
+      "Cut end-to-end inference latency by 88.9% (7.7 s to 0.86 s) and 9x throughput via parallel and async execution.",
+      "Built a 27-keypoint placement API with visibility-aware training for robust side-view guidance at sub-second speeds.",
+      "Optimised preprocessing to 26 ms mean latency (64% faster; P99 37 ms, -66%), then packaged low-latency pipelines for production.",
+    ],
+  },
+  {
+    title: "ML-IoT Intern",
+    organization: "Indian Meteorological Department",
+    period: "Jun 2025 - Jul 2025",
+    bullets: [
+      "Automated thermometer readings using a Raspberry Pi vision system and OpenCV pipeline.",
+      "Trained models on a custom dataset of 1000+ images captured across diverse weather conditions.",
+      "Implemented MQTT-based real-time transmission enabling low-latency environmental monitoring.",
+    ],
+  },
+] as const;
+
+export const skillGroups = [
+  {
+    category: "Languages",
+    items: ["Python", "SQL", "MATLAB", "Java"],
+  },
+  {
+    category: "Machine Learning",
+    items: [
+      "TensorFlow",
+      "Keras",
+      "scikit-learn",
+      "XGBoost",
+      "SHAP",
+      "OpenCV",
+    ],
+  },
+  {
+    category: "CV & Deployment",
+    items: [
+      "FastAPI",
+      "Streamlit",
+      "Time-Series Forecasting",
+      "Computer Vision",
+    ],
+  },
+  {
+    category: "Hardware & IoT",
+    items: ["Raspberry Pi", "MQTT"],
+  },
+  {
+    category: "Tools",
+    items: ["Git", "VS Code", "Jupyter"],
+  },
 ] as const;
 
 export const lifeLeadershipSlides = [
   {
     src: "/imagery/ieee-chairperson-moment.svg",
-    alt: "Speaking at an IEEE NSUT event as Chairperson",
-    caption: "Speaking as IEEE NSUT Chairperson during a student leadership event.",
+    alt: "Chairperson responsibilities at IEEE NSUT Student Branch",
+    caption:
+      "Leading IEEE NSUT Student Branch initiatives as Chairperson from Jun 2025-Present.",
   },
   {
     src: "/imagery/imd-vision-work.svg",
-    alt: "Computer vision work session at IMD",
-    caption: "Working on IoT and computer vision pipelines connected to IMD use cases.",
+    alt: "ML-IoT internship work at the Indian Meteorological Department",
+    caption:
+      "Building Raspberry Pi and OpenCV workflows during my ML-IoT internship at IMD.",
   },
   {
     src: "/imagery/recommendation-engine-session.svg",
-    alt: "Late-night iteration on recommendation system experiments",
-    caption: "Iterating on ranking experiments for the Zomato recommendation engine.",
+    alt: "Work session on the StockVision forecasting platform",
+    caption:
+      "Developing StockVision, an end-to-end stock forecasting platform with FastAPI, Streamlit, and SHAP.",
   },
   {
     src: "/imagery/ev-battery-research-presentation.svg",
-    alt: "Presenting EV battery state-of-charge research",
-    caption: "Presenting my EV battery research and modeling results.",
+    alt: "Presenting EV battery state-of-charge forecasting research",
+    caption:
+      "Presenting the Bayesian-tuned LSTM work accepted at IEEE SEFET 2025.",
   },
 ] as const;
 
 export const projects = [
   {
-    title: "Medical Computer Vision",
-    summary:
-      "Designed a facial analysis pipeline around 27 keypoints and intelligent patch placement for precise clinical imaging workflows.",
-    tags: ["Keypoint Detection", "Image Geometry", "Clinical AI"],
+    title: "EV Battery State-of-Charge Forecasting & Real-Time Inference",
+    period: "May 2024 - Present",
+    bullets: [
+      "Developed a Bayesian-optimized LSTM model for EV battery SoC prediction using 70 real-world driving sessions.",
+      "Achieved MAE of 3.66, outperforming prior research benchmarks (4.28-6.5).",
+      "Engineered a real-time inference pipeline using pre-trained Keras models for continuous SoC monitoring.",
+      "Integrated SHAP-based explainability to analyze feature contributions in battery behavior.",
+    ],
+    tags: ["LSTM", "Keras", "Bayesian Optimization", "SHAP"],
   },
   {
-    title: "Zomato Recommendation Engine",
-    summary:
-      "Built ranking models optimized for NDCG and recall with a stronger focus on retrieval quality and practical recommendation behavior.",
-    tags: ["Ranking Systems", "NDCG", "Recall Optimization"],
-  },
-  {
-    title: "CAPTCHArd",
-    summary:
-      "Automated captcha solving with a robust recognition pipeline tuned for consistency across noisy challenge variations.",
-    tags: ["OCR", "Automation", "Model Serving"],
-  },
-  {
-    title: "Crop Health Monitoring",
-    summary:
-      "Explored multispectral and hyperspectral imaging signals to identify stress patterns and improve agricultural monitoring decisions.",
-    tags: ["Remote Sensing", "Spectral Analysis", "Agritech"],
-  },
-  {
-    title: "IoT Thermometer Digitizer",
-    summary:
-      "Used Raspberry Pi, OpenCV, and MQTT to convert analog thermometer readings into machine-readable telemetry.",
-    tags: ["Raspberry Pi", "OpenCV", "MQTT"],
+    title: "StockVision: Real-Time Stock Forecasting Platform",
+    period: undefined,
+    bullets: [
+      "Built end-to-end LSTM forecasting system using technical candlestick features.",
+      "Deployed Streamlit + FastAPI dashboard with SHAP-based model explainability.",
+    ],
+    tags: ["LSTM", "FastAPI", "Streamlit", "SHAP"],
   },
 ] as const;
 
-export const publication = {
-  title: "Bayesian-Tuned LSTM for EV Battery SoC Prediction",
-  venue: "IEEE SEFET",
-  summary:
-    "Publication-focused work combining sequence modeling and Bayesian optimization to improve state-of-charge estimation for EV batteries.",
+export const leadership = {
+  title: "Chairperson",
+  organization: "IEEE NSUT Student Branch",
+  period: "Jun 2025- Present",
+  bullets: [
+    "Convened 2 national-level hackathons with 6,000+ total participants and 1,200+ offline attendees.",
+    "Led cross-functional teams across technical, logistics, sponsorship, and outreach verticals.",
+    "Coordinated with senior government stakeholders including Deputy CM's office and MCD officials.",
+  ],
 } as const;
 
+export const publication = {
+  title:
+    "A Bayesian-Tuned LSTM Approach to State of Charge Forecasting in Electric Vehicle Batteries",
+  venue: "IEEE SEFET 2025",
+  summary: "Accepted.",
+} as const;
+
+export const awards = [
+  "IBM Data Science Professional Certificate",
+  "Lala Ram Kishan Das Jain Memorial Award for Initiative (2022)",
+] as const;
+
 export const resumePoints = [
-  "B.Tech in Instrumentation and Control Engineering at NSUT",
-  "Chairperson of the IEEE NSUT Student Branch",
-  "ML Engineer Intern at InnerGize",
-  "Computer vision and IoT experience with IMD",
+  "New Delhi, India",
+  "B. Tech, Instrumentation & Control Engineering at Netaji Subhas University of Technology (2023-2027) | CGPA: 7.4",
+  "ML Engineer Intern at DUSQ (formerly InnerGize) | Nov 2025-Present",
+  "Chairperson, IEEE NSUT Student Branch | Jun 2025- Present",
 ] as const;

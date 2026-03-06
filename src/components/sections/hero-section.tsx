@@ -5,7 +5,7 @@ import {
   MotionStaggerItem,
 } from "@/components/motion/reveal";
 import { ProfileHeadshot } from "@/components/profile/profile-headshot";
-import { highlights } from "@/data/portfolio";
+import { heroContent, heroHighlights } from "@/data/portfolio";
 
 export function HeroSection() {
   return (
@@ -13,16 +13,14 @@ export function HeroSection() {
       <div className="relative z-10 grid items-center gap-8 md:gap-10 lg:grid-cols-[1.3fr_0.7fr]">
         <MotionReveal className="max-w-3xl space-y-8">
           <div className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.3em] text-zinc-200">
-            Machine Learning Portfolio
+            {heroContent.location}
           </div>
           <div className="space-y-6">
             <h1 className="max-w-4xl text-4xl font-semibold tracking-[-0.06em] text-white sm:text-5xl lg:text-7xl">
-              Aditya Mishra | Machine Learning &amp; Computer Vision Engineer
+              {heroContent.name}
             </h1>
             <p className="max-w-2xl text-base leading-8 text-zinc-300 sm:text-lg">
-              Building reliable systems across predictive modeling, computer
-              vision, and process dynamics with an engineering-first approach to
-              experimentation and deployment.
+              {heroContent.summary}
             </p>
           </div>
           <div className="flex flex-wrap gap-4">
@@ -45,16 +43,17 @@ export function HeroSection() {
         </MotionReveal>
       </div>
       <MotionStagger className="relative z-10 mt-8 grid items-stretch gap-4 md:mt-10 md:gap-6 md:grid-cols-3">
-        {highlights.map((item, index) => (
-          <MotionStaggerItem key={item} className="h-full">
+        {heroHighlights.map((item, index) => (
+          <MotionStaggerItem key={item.title} className="h-full">
             <div className="flex h-full flex-col rounded-[1.5rem] border border-white/10 bg-panel-strong/80 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
               <p className="text-xs uppercase tracking-[0.35em] text-accent-soft">
                 0{index + 1}
               </p>
-              <h2 className="mt-4 text-2xl font-semibold text-white">{item}</h2>
+              <h2 className="mt-4 text-2xl font-semibold text-white">
+                {item.title}
+              </h2>
               <p className="mt-2 text-sm leading-7 text-zinc-400">
-                Production-focused work that balances technical rigor with clear
-                business or research outcomes.
+                {item.description}
               </p>
             </div>
           </MotionStaggerItem>

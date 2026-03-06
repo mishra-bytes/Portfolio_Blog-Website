@@ -17,8 +17,8 @@ export function ProjectsSection() {
         <MotionReveal>
           <SectionHeading
             eyebrow="Projects"
-            title="Applied machine learning across vision, ranking, automation, and IoT."
-            description="A selected set of projects focused on measurable outcomes, careful optimization, and real-world system constraints."
+            title="Projects in forecasting, explainability, and real-time inference."
+            description="Current project work spans EV battery state-of-charge forecasting and StockVision, an end-to-end stock forecasting platform with FastAPI, Streamlit, and SHAP."
           />
         </MotionReveal>
         <MotionStagger className="grid items-stretch gap-4 md:gap-5 lg:grid-cols-2 xl:grid-cols-3">
@@ -26,7 +26,8 @@ export function ProjectsSection() {
             <MotionStaggerItem key={project.title} className="h-full">
               <ProjectCard
                 title={project.title}
-                summary={project.summary}
+                period={project.period}
+                bullets={project.bullets}
                 tags={project.tags}
               />
             </MotionStaggerItem>
@@ -50,7 +51,7 @@ export function ProjectsSection() {
               </p>
             </div>
             <span className="rounded-full border border-white/15 bg-black/20 px-4 py-2 text-sm text-white">
-              Research + Optimization
+              Accepted
             </span>
           </div>
           </div>

@@ -10,12 +10,12 @@ export function LifeLeadershipSection() {
         <MotionReveal className="flex flex-col gap-5 md:gap-6 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeading
             eyebrow="Life & Leadership"
-            title="Moments that shaped how I build, lead, and communicate."
-            description="A visual snapshot of research, leadership, and engineering work across IEEE NSUT, IMD, and project-driven experimentation."
+            title="Snapshots from IEEE leadership, IMD work, and forecasting research."
+            description="This gallery highlights IEEE NSUT Student Branch leadership, the IMD internship, StockVision development, and EV battery SoC forecasting research."
           />
           <p className="max-w-xl text-sm leading-7 text-zinc-400">
-            The carousel stays light and touch-friendly while matching the
-            existing dark, technical presentation of the portfolio.
+            The captions align with current resume milestones across leadership,
+            internships, and forecasting projects.
           </p>
         </MotionReveal>
         <MotionReveal>

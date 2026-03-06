@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { experience, resumePoints, skills } from "@/data/portfolio";
+import {
+  awards,
+  experience,
+  heroContent,
+  publication,
+  resumePoints,
+  skillGroups,
+} from "@/data/portfolio";
 
 export const metadata: Metadata = {
   title: "Resume",
@@ -18,12 +25,10 @@ export default function ResumePage() {
                 Resume
               </p>
               <h1 className="text-4xl font-semibold tracking-[-0.05em] text-white sm:text-5xl">
-                Aditya Mishra
+                {heroContent.name}
               </h1>
               <p className="max-w-3xl text-base leading-8 text-zinc-300">
-                Machine Learning and Computer Vision engineer focused on
-                predictive modeling, sensing-driven systems, and practical
-                applied research.
+                {heroContent.summary}
               </p>
             </div>
             <Link
@@ -51,35 +56,73 @@ export default function ResumePage() {
               <h2 className="text-2xl font-semibold text-white">
                 Core Skills
               </h2>
-              <div className="flex flex-wrap gap-2">
-                {skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-zinc-200"
-                  >
-                    {skill}
-                  </span>
+              <div className="grid gap-4">
+                {skillGroups.map((group) => (
+                  <div key={group.category} className="space-y-2">
+                    <p className="text-sm font-semibold text-white">
+                      {group.category}
+                    </p>
+                    <p className="text-sm leading-7 text-zinc-300">
+                      {group.items.join(", ")}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
+          <div className="grid gap-5 lg:grid-cols-2">
+            <article className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-6">
+              <p className="text-xs uppercase tracking-[0.35em] text-accent-soft">
+                Publication
+              </p>
+              <h2 className="mt-3 text-xl font-semibold text-white">
+                {publication.title}
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-zinc-300">
+                {publication.venue} | {publication.summary}
+              </p>
+            </article>
+            <article className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-6">
+              <p className="text-xs uppercase tracking-[0.35em] text-accent-soft">
+                Awards & Certifications
+              </p>
+              <ul className="mt-4 space-y-3 text-sm leading-7 text-zinc-300">
+                {awards.map((award) => (
+                  <li key={award} className="flex gap-3">
+                    <span className="mt-2 h-1.5 w-1.5 rounded-full bg-accent-soft" />
+                    <span>{award}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </div>
           <div className="grid gap-5">
             {experience.map((item) => (
               <article
-                key={item.title}
+                key={`${item.organization}-${item.title}`}
                 className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-6"
               >
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <h2 className="text-xl font-semibold text-white">
-                    {item.title}
-                  </h2>
-                  <span className="text-xs uppercase tracking-[0.3em] text-accent-soft">
-                    {item.organization}
+                  <div>
+                    <h2 className="text-xl font-semibold text-white">
+                      {item.title}
+                    </h2>
+                    <span className="text-xs uppercase tracking-[0.3em] text-accent-soft">
+                      {item.organization}
+                    </span>
+                  </div>
+                  <span className="text-xs uppercase tracking-[0.3em] text-zinc-400">
+                    {item.period}
                   </span>
                 </div>
-                <p className="mt-4 text-sm leading-7 text-zinc-400">
-                  {item.description}
-                </p>
+                <ul className="mt-4 space-y-3 text-sm leading-7 text-zinc-400">
+                  {item.bullets.map((bullet) => (
+                    <li key={bullet} className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 rounded-full bg-accent-soft" />
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
               </article>
             ))}
           </div>

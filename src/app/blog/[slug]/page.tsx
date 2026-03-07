@@ -18,17 +18,19 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
   return (
     <div className="mx-auto mt-10 max-w-3xl space-y-6 text-base leading-8 text-slate-700 sm:text-lg sm:leading-9">
       {blocks.map((block, index) => {
+        const key = `${index}-${block.type}`;
+
         switch (block.type) {
           case "paragraph":
             return (
-              <p key={`${block.type}-${index}`} className="text-slate-700">
+              <p key={key} className="text-slate-700">
                 {typeof block.value === "string" ? block.value : block.value.join(" ")}
               </p>
             );
           case "heading":
             return (
               <h2
-                key={`${block.type}-${index}`}
+                key={key}
                 className="pt-4 text-3xl font-semibold tracking-[-0.04em] text-slate-900"
               >
                 {typeof block.value === "string" ? block.value : block.value.join(" ")}
@@ -42,7 +44,7 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
 
             return (
               <CodeBlock
-                key={`${block.type}-${index}`}
+                key={key}
                 code={formattedCode}
                 language={block.language}
               />
@@ -53,15 +55,14 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
             }
 
             return (
-              <figure key={`${block.type}-${index}`} className="space-y-3">
-                <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-slate-100">
+              <figure key={key} className="space-y-3">
+                <div className="relative aspect-video overflow-hidden rounded-[1.5rem] border border-slate-200 bg-slate-100">
                   <Image
                     src={block.src}
                     alt={typeof block.value === "string" ? block.value : "Blog image"}
-                    width={1600}
-                    height={900}
+                    fill
                     sizes="(max-width: 768px) 100vw, 768px"
-                    className="h-auto w-full object-cover"
+                    className="object-cover"
                   />
                 </div>
                 {typeof block.value === "string" && block.value.length > 0 ? (
@@ -74,15 +75,16 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
           case "list":
             return (
               <ul
-                key={`${block.type}-${index}`}
+                key={key}
                 className="list-disc space-y-2 pl-6 text-slate-700 marker:text-blue-600"
               >
                 {(Array.isArray(block.value) ? block.value : [block.value]).map((item) => (
-                  <li key={item}>{item}</li>
+                  <li key={`${key}-${item}`}>{item}</li>
                 ))}
               </ul>
             );
           default:
+            console.warn("Unsupported content block", block);
             return null;
         }
       })}
@@ -109,8 +111,14 @@ export async function generateMetadata({
   }
 
   return {
-    title: post.title,
+    title: `${post.title} | Aditya Mishra`,
     description: post.excerpt,
+    openGraph: {
+      title: `${post.title} | Aditya Mishra`,
+      description: post.excerpt,
+      type: "article",
+      url: `${process.env.SITE_URL ?? "http://localhost:3000"}/blog/${post.slug}`,
+    },
   };
 }
 

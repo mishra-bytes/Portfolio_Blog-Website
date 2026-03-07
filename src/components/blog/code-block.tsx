@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SyntaxHighlighter from "react-syntax-highlighter/dist/cjs/prism";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 type CodeBlockProps = {
   code: string;
@@ -43,9 +45,28 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
       >
         {isCopied ? "Copied! \u2713" : "Copy"}
       </button>
-      <pre className="overflow-x-auto p-4 pt-10 text-sm font-mono leading-7 whitespace-pre">
-        <code data-language={language}>{code}</code>
-      </pre>
+      <SyntaxHighlighter
+        language={language ?? "text"}
+        style={vscDarkPlus}
+        PreTag="div"
+        customStyle={{
+          margin: 0,
+          padding: "2.75rem 1rem 1rem",
+          background: "transparent",
+          borderRadius: 0,
+          fontSize: "0.875rem",
+          lineHeight: 1.75,
+          overflowX: "auto",
+        }}
+        codeTagProps={{
+          style: {
+            fontFamily:
+              '"IBM Plex Mono", "Cascadia Code", ui-monospace, SFMono-Regular, monospace',
+          },
+        }}
+      >
+        {code}
+      </SyntaxHighlighter>
     </div>
   );
 }

@@ -10,6 +10,8 @@ type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
 };
 
+export const dynamicParams = false;
+
 type BlockRendererProps = {
   blocks: ContentBlock[];
 };
@@ -93,7 +95,9 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
 }
 
 export async function generateStaticParams() {
-  return getAllPosts().map((post) => ({
+  const posts = getAllPosts();
+
+  return posts.map((post) => ({
     slug: post.slug,
   }));
 }

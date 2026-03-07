@@ -27,13 +27,16 @@ export type BlogPostSummary = Omit<BlogPost, "content">;
 
 const postsDirectory = path.join(process.cwd(), "posts");
 
-function parsePostFile(fileContents: string, fileName: string): BlogPost {
+function parsePostFile(
+  fileContents: string,
+  fileName: string,
+  fallbackSlug?: string,
+): BlogPost {
   const parsed = JSON.parse(fileContents) as BlogPost;
 
   if (
     !parsed ||
     typeof parsed.title !== "string" ||
-    typeof parsed.slug !== "string" ||
     typeof parsed.date !== "string" ||
     typeof parsed.excerpt !== "string" ||
     !Array.isArray(parsed.content)
@@ -41,7 +44,19 @@ function parsePostFile(fileContents: string, fileName: string): BlogPost {
     throw new Error(`Invalid post JSON structure in ${fileName}`);
   }
 
-  return parsed;
+  const resolvedSlug =
+    typeof parsed.slug === "string" && parsed.slug.trim().length > 0
+      ? parsed.slug
+      : fallbackSlug;
+
+  if (!resolvedSlug) {
+    throw new Error(`Missing slug in ${fileName}`);
+  }
+
+  return {
+    ...parsed,
+    slug: resolvedSlug,
+  };
 }
 
 export function getAllPosts(): BlogPostSummary[] {
@@ -54,7 +69,12 @@ export function getAllPosts(): BlogPostSummary[] {
     .filter((fileName) => fileName.endsWith(".json"))
     .map((fileName) => {
       const fullPath = path.join(postsDirectory, fileName);
-      const post = parsePostFile(fs.readFileSync(fullPath, "utf8"), fileName);
+      const fileSlug = path.basename(fileName, ".json");
+      const post = parsePostFile(
+        fs.readFileSync(fullPath, "utf8"),
+        fileName,
+        fileSlug,
+      );
 
       return {
         title: post.title,
@@ -67,11 +87,45 @@ export function getAllPosts(): BlogPostSummary[] {
 }
 
 export function getPostBySlug(slug: string): BlogPost | null {
-  const fullPath = path.join(postsDirectory, `${slug}.json`);
+  const directPath = path.join(postsDirectory, `${slug}.json`);
 
-  if (!fs.existsSync(fullPath)) {
+  if (fs.existsSync(directPath)) {
+    return parsePostFile(
+      fs.readFileSync(directPath, "utf8"),
+      `${slug}.json`,
+      slug,
+    );
+  }
+
+  if (!fs.existsSync(postsDirectory)) {
     return null;
   }
 
-  return parsePostFile(fs.readFileSync(fullPath, "utf8"), `${slug}.json`);
+  const matchedFile = fs
+    .readdirSync(postsDirectory)
+    .filter((fileName) => fileName.endsWith(".json"))
+    .find((fileName) => {
+      const fullPath = path.join(postsDirectory, fileName);
+      const fileSlug = path.basename(fileName, ".json");
+      const post = parsePostFile(
+        fs.readFileSync(fullPath, "utf8"),
+        fileName,
+        fileSlug,
+      );
+
+      return post.slug === slug;
+    });
+
+  if (!matchedFile) {
+    return null;
+  }
+
+  const fullPath = path.join(postsDirectory, matchedFile);
+  const fileSlug = path.basename(matchedFile, ".json");
+
+  return parsePostFile(
+    fs.readFileSync(fullPath, "utf8"),
+    matchedFile,
+    fileSlug,
+  );
 }

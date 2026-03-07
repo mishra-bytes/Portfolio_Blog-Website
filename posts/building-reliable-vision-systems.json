@@ -1,0 +1,140 @@
+{
+  "title": "All About Overfitting in Machine Learning: Meaning, Examples, and Why It Matters",
+  "slug": "overfitting-in-machine-learning",
+  "date": "2026-03-08",
+  "excerpt": "Overfitting is the classic bait-and-switch of machine learning: dazzling training accuracy that vanishes on unseen data. Learn what it is, why it happens, how to spot it, and when it might even be useful.",
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Mirage of Perfect Accuracy"
+    },
+    {
+      "type": "blockquote",
+      "value": "If your model performs flawlessly on data it already knows, you have taught it to recite, not to reason."
+    },
+    {
+      "type": "paragraph",
+      "value": "You run a script, accuracy climbs towards 100 per cent, and your gut does a victory dance. Then you load the test set and the celebration evaporates. Welcome to overfitting."
+    },
+    {
+      "type": "paragraph",
+      "value": "Overfitting is said to be bad, but is it always bad? Keep that question in mind as we explore the idea."
+    },
+    {
+      "type": "heading",
+      "value": "What is Overfitting?"
+    },
+    {
+      "type": "paragraph",
+      "value": "Overfitting occurs when a model memorises quirks of the training data instead of learning the underlying pattern. Think of revising only last year’s exam paper—you may ace a near-identical test but flounder on new questions."
+    },
+    {
+      "type": "heading",
+      "value": "Why Does It Happen?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "High model complexity—more parameters than the data can justify.",
+        "Noisy or limited data—the model chases randomness.",
+        "Too many training epochs—it keeps tweaking until random error looks like signal."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "How to Spot Overfitting"
+    },
+    {
+      "type": "table",
+      "value": "| Signal | Training Metric | Validation/Test Metric |\\n|--------|-----------------|------------------------|\\n| Good fit | High, improving | High, improving |\\n| Underfitting | Low, stagnant | Low, stagnant |\\n| Overfitting | High, improving | Stalls or degrades |"
+    },
+    {
+      "type": "heading",
+      "value": "Hands-On Classification Example"
+    },
+    {
+      "type": "paragraph",
+      "value": "Run this snippet to watch overfitting unfold on a breast-cancer dataset."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import numpy as np\\nfrom sklearn.datasets import load_breast_cancer\\nfrom sklearn.tree import DecisionTreeClassifier\\nfrom sklearn.model_selection import train_test_split\\nfrom sklearn.metrics import accuracy_score\\n\\nX, y = load_breast_cancer(return_X_y=True, as_frame=False)\\nX_train, X_test, y_train, y_test = train_test_split(\\n    X, y, test_size=0.3, random_state=42, stratify=y\\n)\\n\\nshallow = DecisionTreeClassifier(max_depth=3, random_state=42)\\ndeep = DecisionTreeClassifier(max_depth=None, random_state=42)\\n\\nfor model in (shallow, deep):\\n    model.fit(X_train, y_train)\\n\\ndef report(model, name):\\n    train_acc = accuracy_score(y_train, model.predict(X_train))\\n    test_acc = accuracy_score(y_test, model.predict(X_test))\\n    print(f\"{name}: train {train_acc:.3f} | test {test_acc:.3f}\")\\n\\nreport(shallow, \"Shallow\")\\nreport(deep, \"Deep\")"
+    },
+    {
+      "type": "paragraph",
+      "value": "You will notice the deep tree hits perfect training accuracy yet slips on unseen data—classic overfitting."
+    },
+    {
+      "type": "heading",
+      "value": "Visual Regression Experiment"
+    },
+    {
+      "type": "paragraph",
+      "value": "This plot shows underfitting, a good fit, and overfitting when approximating a noisy sine curve."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import numpy as np\\nimport matplotlib.pyplot as plt\\nfrom sklearn.preprocessing import PolynomialFeatures\\nfrom sklearn.linear_model import LinearRegression\\nfrom sklearn.pipeline import make_pipeline\\n\\nrng = np.random.RandomState(1)\\nX = np.sort(rng.uniform(-3, 3, 40))[:, None]\\ny = np.sin(X).ravel() + rng.normal(scale=0.15, size=X.shape[0])\\n\\ndegrees = [1, 4, 12]\\nplt.scatter(X, y, s=20, label=\"Samples\")\\n\\nX_plot = np.linspace(-3, 3, 300)[:, None]\\nfor d in degrees:\\n    model = make_pipeline(PolynomialFeatures(d), LinearRegression())\\n    model.fit(X, y)\\n    y_plot = model.predict(X_plot)\\n    plt.plot(X_plot, y_plot, label=f\"degree {d}\")\\n\\nplt.legend()\\nplt.title(\"Underfitting vs good fit vs overfitting\")\\nplt.show()"
+    },
+    {
+      "type": "paragraph",
+      "value": "Degree 1 under-fits, degree 4 captures the curve well, and degree 12 wiggles frantically to kiss every point—overfitting in visual form."
+    },
+    {
+      "type": "heading",
+      "value": "Is Overfitting Always Bad?"
+    },
+    {
+      "type": "blockquote",
+      "value": "Andrew Ng once noted that a low-bias, high-variance model can sometimes be tamed with more data faster than a high-bias, low-variance one can be improved."
+    },
+    {
+      "type": "paragraph",
+      "value": "Context matters. Mild overfitting can be acceptable in certain scenarios."
+    },
+    {
+      "type": "list",
+      "value": [
+        "Extremely large and fresh data streams where new examples arrive continuously.",
+        "Risk-tolerant competitions or benchmarking where slight variance is acceptable.",
+        "Highly personalised recommenders that intentionally bias towards one user’s history."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Strategies to Prevent or Mitigate Overfitting"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Use hold-out validation or k-fold cross-validation to monitor generalisation.",
+        "Apply regularisation such as L1, L2, dropout, or early stopping.",
+        "Prefer simpler models when they suffice—Occam’s razor often wins.",
+        "Gather more data or use augmentation to turn variance into signal."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from xgboost import XGBClassifier\\nmodel = XGBClassifier(n_estimators=500)\\nmodel.fit(\\n    X_train, y_train,\\n    eval_set=[(X_test, y_test)],\\n    early_stopping_rounds=30,\\n    verbose=False\\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Illustration"
+    },
+    {
+      "type": "paragraph",
+      "value": "In 2015 a diagnostic model for diabetic retinopathy achieved astounding accuracy on an internal dataset. Deployed in a rural clinic, its error rate spiked. Post-mortem analysis showed the model had fixated on camera metadata and lighting artefacts unique to the training hospital. What looked like genius was stage lighting."
+    },
+    {
+      "type": "heading",
+      "value": "Final Thoughts"
+    },
+    {
+      "type": "paragraph",
+      "value": "Overfitting is neither monster nor myth. It is a signal—sometimes of model power, sometimes of data poverty. Treat it like a sharp knife: invaluable in skilled hands, harmful in careless ones. Next time your training metric skyrockets, ask yourself whether you have built a thinker or a parrot."
+    }
+  ]
+}

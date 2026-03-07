@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 interface Comment {
   id: string;
@@ -9,6 +10,10 @@ interface Comment {
   created_at: string;
   parent_id: string | null;
   is_owner: boolean;
+}
+
+interface CommentNode extends Comment {
+  children: CommentNode[];
 }
 
 type BlogCommentsProps = {
@@ -30,6 +35,16 @@ type CommentFormProps = {
   onCancel?: () => void;
 };
 
+type CommentThreadProps = {
+  comment: CommentNode;
+  slug: string;
+  isMounted: boolean;
+  activeReplyId: string | null;
+  setActiveReplyId: (commentId: string | null) => void;
+  onSubmitted: (comment: Comment) => void;
+  depth?: number;
+};
+
 const OWNER_EMAIL = "aditya_mishra@outlook.in";
 
 function createInitialFormState(): CommentFormState {
@@ -41,19 +56,81 @@ function createInitialFormState(): CommentFormState {
   };
 }
 
-function OwnerBadge() {
-  return (
-    <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-blue-700">
-      (Owner)
-    </span>
-  );
-}
-
 function formatCommentDate(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
+}
+
+function getInitials(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+
+  if (parts.length === 0) {
+    return "??";
+  }
+
+  return parts
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+function buildCommentTree(comments: Comment[]) {
+  const nodesById = new Map<string, CommentNode>();
+
+  // First pass: create nodes so child lookups are O(1) in the linking pass.
+  for (const comment of comments) {
+    nodesById.set(comment.id, {
+      ...comment,
+      children: [],
+    });
+  }
+
+  const roots: CommentNode[] = [];
+
+  for (const comment of comments) {
+    const node = nodesById.get(comment.id);
+
+    if (!node) {
+      continue;
+    }
+
+    if (comment.parent_id) {
+      const parent = nodesById.get(comment.parent_id);
+
+      if (parent) {
+        parent.children.push(node);
+        continue;
+      }
+    }
+
+    roots.push(node);
+  }
+
+  return roots;
+}
+
+function sortCommentTree(nodes: CommentNode[], depth = 0): CommentNode[] {
+  const sorted = [...nodes].sort((left, right) => {
+    const leftTime = new Date(left.created_at).getTime();
+    const rightTime = new Date(right.created_at).getTime();
+
+    return depth === 0 ? rightTime - leftTime : leftTime - rightTime;
+  });
+
+  return sorted.map((node) => ({
+    ...node,
+    children: sortCommentTree(node.children, depth + 1),
+  }));
+}
+
+function OwnerBadge() {
+  return (
+    <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-blue-700">
+      Author
+    </span>
+  );
 }
 
 function CommentForm({
@@ -146,6 +223,7 @@ function CommentForm({
   return (
     <form
       onSubmit={handleSubmit}
+      suppressHydrationWarning={true}
       className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
     >
       <div className="grid gap-5">
@@ -204,10 +282,10 @@ function CommentForm({
           />
         </label>
 
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-slate-500">
             {parentId
-              ? "Your reply will appear nested under this comment."
+              ? "Your reply will appear nested in this thread."
               : "Your comment will appear directly under this article."}
           </p>
           <div className="flex items-center gap-3">
@@ -241,9 +319,109 @@ function CommentForm({
   );
 }
 
+function CommentThread({
+  comment,
+  slug,
+  isMounted,
+  activeReplyId,
+  setActiveReplyId,
+  onSubmitted,
+  depth = 0,
+}: CommentThreadProps) {
+  const displayName = comment.is_owner ? "Aditya Mishra" : comment.name;
+  const avatarTone = comment.is_owner
+    ? "bg-blue-100 text-blue-700 ring-1 ring-blue-200"
+    : "bg-slate-100 text-slate-600 ring-1 ring-slate-200";
+
+  return (
+    <article className="rounded-3xl border border-slate-200 bg-white px-5 py-5 shadow-sm">
+      <div className="flex items-start gap-4">
+        <div
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${avatarTone}`}
+        >
+          {getInitials(displayName)}
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-sm font-semibold text-slate-900">
+                {displayName}
+              </h3>
+              {comment.is_owner ? <OwnerBadge /> : null}
+            </div>
+            <div className="flex items-center gap-3">
+              <time className="text-xs uppercase tracking-[0.18em] text-slate-400">
+                {formatCommentDate(comment.created_at)}
+              </time>
+              <button
+                type="button"
+                onClick={() =>
+                  setActiveReplyId(
+                    activeReplyId === comment.id ? null : comment.id,
+                  )
+                }
+                className="text-sm text-blue-600 font-medium mt-2 sm:mt-0"
+              >
+                Reply
+              </button>
+            </div>
+          </div>
+
+          <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-700">
+            {comment.content}
+          </p>
+
+          <AnimatePresence initial={false}>
+            {isMounted && activeReplyId === comment.id ? (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+                className="mt-4"
+              >
+                <CommentForm
+                  slug={slug}
+                  parentId={comment.id}
+                  submitLabel="Post Reply"
+                  onSubmitted={onSubmitted}
+                  onCancel={() => setActiveReplyId(null)}
+                />
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+
+          {comment.children.length > 0 ? (
+            <div
+              className={`mt-5 space-y-4 border-l-2 border-slate-200 pl-4 ${
+                depth === 0 ? "ml-4 md:ml-8" : "ml-2 md:ml-4"
+              }`}
+            >
+              {comment.children.map((child) => (
+                <CommentThread
+                  key={child.id}
+                  comment={child}
+                  slug={slug}
+                  isMounted={isMounted}
+                  activeReplyId={activeReplyId}
+                  setActiveReplyId={setActiveReplyId}
+                  onSubmitted={onSubmitted}
+                  depth={depth + 1}
+                />
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export function BlogComments({ slug }: BlogCommentsProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -301,12 +479,19 @@ export function BlogComments({ slug }: BlogCommentsProps) {
     return () => controller.abort();
   }, [slug]);
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   function handleInsertedComment(comment: Comment) {
-    setComments((current) => [comment, ...current]);
+    setComments((currentComments) => [comment, ...currentComments]);
     setActiveReplyId(null);
   }
 
-  const topLevelComments = comments.filter((comment) => !comment.parent_id);
+  const commentTree = useMemo(
+    () => sortCommentTree(buildCommentTree(comments)),
+    [comments],
+  );
 
   return (
     <section className="mx-auto max-w-3xl">
@@ -318,16 +503,32 @@ export function BlogComments({ slug }: BlogCommentsProps) {
           Comments
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
-          Leave a note, question, or correction. Owner replies are verified
-          server-side and displayed inline in the thread.
+          Leave a note, question, or correction. The thread is rendered as a
+          recursive conversation tree with verified author replies.
         </p>
       </div>
 
-      <CommentForm
-        slug={slug}
-        submitLabel="Submit"
-        onSubmitted={handleInsertedComment}
-      />
+      {isMounted ? (
+        <CommentForm
+          slug={slug}
+          submitLabel="Submit"
+          onSubmitted={handleInsertedComment}
+        />
+      ) : (
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="space-y-4">
+            <div className="h-5 w-20 animate-pulse rounded bg-slate-100" />
+            <div className="h-12 rounded-2xl bg-slate-100" />
+            <div className="h-5 w-24 animate-pulse rounded bg-slate-100" />
+            <div className="h-12 rounded-2xl bg-slate-100" />
+            <div className="h-5 w-28 animate-pulse rounded bg-slate-100" />
+            <div className="h-32 rounded-2xl bg-slate-100" />
+            <div className="flex justify-end">
+              <div className="h-10 w-28 rounded-full bg-slate-100" />
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="mt-8 space-y-4">
         {isLoading ? (
@@ -338,85 +539,22 @@ export function BlogComments({ slug }: BlogCommentsProps) {
           <div className="rounded-3xl border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-700">
             {error}
           </div>
-        ) : topLevelComments.length === 0 ? (
+        ) : commentTree.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-5 py-6 text-sm text-slate-500">
             No comments yet. Start the discussion.
           </div>
         ) : (
-          topLevelComments.map((comment) => {
-            const replies = comments.filter(
-              (reply) => reply.parent_id === comment.id,
-            );
-
-            return (
-              <article
-                key={comment.id}
-                className="rounded-3xl border border-slate-200 bg-white px-5 py-5 shadow-sm"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-sm font-semibold text-slate-900">
-                      {comment.is_owner ? "Aditya Mishra" : comment.name}
-                    </h3>
-                    {comment.is_owner ? <OwnerBadge /> : null}
-                  </div>
-                  <time className="text-xs uppercase tracking-[0.22em] text-slate-400">
-                    {formatCommentDate(comment.created_at)}
-                  </time>
-                </div>
-
-                <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-700">
-                  {comment.content}
-                </p>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveReplyId(comment.id)}
-                  className="text-sm text-blue-600 font-medium mt-2"
-                >
-                  Reply
-                </button>
-
-                {activeReplyId === comment.id ? (
-                  <div className="mt-4">
-                    <CommentForm
-                      slug={slug}
-                      parentId={comment.id}
-                      submitLabel="Post Reply"
-                      onSubmitted={handleInsertedComment}
-                      onCancel={() => setActiveReplyId(null)}
-                    />
-                  </div>
-                ) : null}
-
-                {replies.length > 0 ? (
-                  <div className="mt-5 space-y-3 border-l-2 border-slate-200 pl-4 ml-8">
-                    {replies.map((reply) => (
-                      <article
-                        key={reply.id}
-                        className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h4 className="text-sm font-semibold text-slate-900">
-                              {reply.is_owner ? "Aditya Mishra" : reply.name}
-                            </h4>
-                            {reply.is_owner ? <OwnerBadge /> : null}
-                          </div>
-                          <time className="text-xs uppercase tracking-[0.22em] text-slate-400">
-                            {formatCommentDate(reply.created_at)}
-                          </time>
-                        </div>
-                        <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-700">
-                          {reply.content}
-                        </p>
-                      </article>
-                    ))}
-                  </div>
-                ) : null}
-              </article>
-            );
-          })
+          commentTree.map((comment) => (
+            <CommentThread
+              key={comment.id}
+              comment={comment}
+              slug={slug}
+              isMounted={isMounted}
+              activeReplyId={activeReplyId}
+              setActiveReplyId={setActiveReplyId}
+              onSubmitted={handleInsertedComment}
+            />
+          ))
         )}
       </div>
     </section>

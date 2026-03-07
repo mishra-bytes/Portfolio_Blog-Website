@@ -2,10 +2,10 @@ import Link from "next/link";
 import { PostCard } from "@/components/blog/post-card";
 import { MotionReveal, MotionStagger, MotionStaggerItem } from "@/components/motion/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
-import type { PostSummary } from "@/lib/blog";
+import type { BlogPostSummary } from "@/lib/posts";
 
 type BlogSectionProps = {
-  posts: PostSummary[];
+  posts: BlogPostSummary[];
 };
 
 export function BlogSection({ posts }: BlogSectionProps) {
@@ -15,8 +15,8 @@ export function BlogSection({ posts }: BlogSectionProps) {
         <MotionReveal className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeading
             eyebrow="Blog"
-            title="Markdown-native writing for technical notes and project breakdowns."
-            description="Posts are sourced directly from local markdown files, so adding new writing is as simple as dropping a `.md` file into the content directory."
+            title="Structured writing for technical notes and project breakdowns."
+            description="Posts are sourced from local JSON files, so the reading experience stays predictable while the content model remains explicit and type-safe."
           />
           <Link
             href="/blog"
@@ -34,7 +34,7 @@ export function BlogSection({ posts }: BlogSectionProps) {
         </MotionStagger>
         <MotionReveal>
           <div className="rounded-[1.5rem] border border-dashed border-white/12 bg-black/20 p-5 text-sm text-zinc-400">
-          Content folder: <code>content/posts</code>
+            Content folder: <code>posts</code>
           </div>
         </MotionReveal>
       </div>

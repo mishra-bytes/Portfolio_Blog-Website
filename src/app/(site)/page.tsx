@@ -4,7 +4,7 @@ import { HeroSection } from "@/components/sections/hero-section";
 import { LifeLeadershipSection } from "@/components/sections/life-leadership-section";
 import { ProjectsSection } from "@/components/sections/projects-section";
 import { ResumeSection } from "@/components/sections/resume-section";
-import { getAllPosts } from "@/lib/blog";
+import { getAllPosts } from "@/lib/posts";
 
 export default function Home() {
   const posts = getAllPosts().slice(0, 2);

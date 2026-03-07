@@ -4,6 +4,30 @@ import matter from "gray-matter";
 
 const postsDirectory = path.join(process.cwd(), "content", "posts");
 
+function normalizeMarkdownSource(source: string) {
+  const trimmed = source.trim();
+
+  if (!trimmed.startsWith("```")) {
+    return source;
+  }
+
+  const lines = trimmed.split(/\r?\n/);
+  const firstLine = lines[0] ?? "";
+  const lastLine = lines.at(-1) ?? "";
+
+  if (!lastLine.startsWith("```")) {
+    return source;
+  }
+
+  const fencedLanguage = firstLine.slice(3).trim();
+
+  if (fencedLanguage && fencedLanguage !== "md" && fencedLanguage !== "markdown") {
+    return source;
+  }
+
+  return lines.slice(1, -1).join("\n");
+}
+
 export type PostFrontmatter = {
   title: string;
   excerpt: string;
@@ -33,7 +57,9 @@ export function getAllPosts(): PostSummary[] {
     .map((fileName) => {
       const slug = fileName.replace(/\.md$/, "");
       const fullPath = path.join(postsDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, "utf8");
+      const fileContents = normalizeMarkdownSource(
+        fs.readFileSync(fullPath, "utf8"),
+      );
       const { data } = matter(fileContents);
 
       return {
@@ -55,7 +81,7 @@ export function getPostBySlug(slug: string): Post | null {
     return null;
   }
 
-  const fileContents = fs.readFileSync(fullPath, "utf8");
+  const fileContents = normalizeMarkdownSource(fs.readFileSync(fullPath, "utf8"));
   const { data, content } = matter(fileContents);
 
   return {

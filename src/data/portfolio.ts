@@ -9,8 +9,8 @@ export const navLinks = [
 export const contactItems = [
   {
     label: "Email",
-    value: "aditya.mishra.ug23@nsut.ac.in",
-    href: "mailto:aditya.mishra.ug23@nsut.ac.in",
+    value: "aditya_mishra@outlook.in",
+    href: "mailto:aditya_mishra@outlook.in",
   },
   {
     label: "Phone",

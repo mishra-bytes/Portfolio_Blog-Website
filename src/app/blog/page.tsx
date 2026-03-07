@@ -1,31 +1,35 @@
 import type { Metadata } from "next";
 import { PostCard } from "@/components/blog/post-card";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { getAllPosts } from "@/lib/blog";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "Technical writing, project breakdowns, and machine learning notes.",
+  description: "Long-form technical writing in a minimalist, reading-first layout.",
 };
 
 export default function BlogPage() {
   const posts = getAllPosts();
 
   return (
-    <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 pb-16 pt-6 sm:px-6 lg:px-8">
-      <section className="section-shell rounded-[2rem] px-6 py-12 sm:px-10 lg:px-14">
-        <div className="relative z-10 space-y-10">
-          <SectionHeading
-            eyebrow="Writing"
-            title="Technical notes and engineering breakdowns."
-            description="This route reads markdown files from the local content directory and turns them into styled posts with support for headings, code blocks, tables, and lists."
-          />
-          <div className="grid gap-5 lg:grid-cols-2">
-            {posts.map((post) => (
-              <PostCard key={post.slug} post={post} />
-            ))}
-          </div>
+    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-0">
+      <section className="blog-panel rounded-[2rem] px-6 py-10 sm:px-10 sm:py-12">
+        <div className="mx-auto max-w-3xl text-left">
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#0f62fe]">
+            Writing
+          </p>
+          <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-[#0f172a] sm:text-5xl">
+            Technical notes designed for fast scanning and deep reading.
+          </h1>
+          <p className="mt-5 max-w-2xl text-base leading-8 text-[#374151]">
+            This index keeps the decision surface small: each post shows only
+            the metadata needed to choose what to read next.
+          </p>
         </div>
+      </section>
+      <section className="grid gap-4 md:gap-6">
+        {posts.map((post) => (
+          <PostCard key={post.slug} post={post} />
+        ))}
       </section>
     </main>
   );

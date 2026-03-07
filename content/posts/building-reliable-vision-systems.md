@@ -1,49 +1,53 @@
 ---
-title: "Designing Reliable Vision Systems for Measurement Tasks"
-excerpt: "A placeholder post showing how local markdown articles render inside the portfolio, including code blocks, lists, and tables."
+title: "Your Blog Post Title"
+excerpt: "A short summary for the blog index and post header."
 date: "2026-03-07"
-readTime: "4 min read"
+readTime: "5 min read"
 tags:
+  - Machine Learning
   - Computer Vision
-  - MLOps
-  - Markdown
+  - FastAPI
 ---
 
-# Why measurement-focused vision is different
+# Start with a clear headline
 
-When a vision model is connected to a physical process, accuracy is only one part of the problem. Calibration, latency, failure modes, and sensor alignment matter just as much as the model itself.
+Write a strong opening paragraph here. This should explain what the post is
+about, why it matters, and what the reader will learn.
 
-## A practical loop
+## Add a section heading
 
-1. Acquire stable frames from the camera or device.
-2. Run preprocessing tuned to the measurement surface.
-3. Infer the structured target such as digits, keypoints, or boundaries.
-4. Validate the result against domain constraints before publishing data.
+Use regular markdown for long-form writing. The current parser and post template
+support:
 
-## Example preprocessing snippet
+- Paragraphs
+- Bullet lists
+- Numbered lists
+- Tables
+- Blockquotes
+- Inline code
+- Code fences
+
+## Example table
+
+| Item | Description |
+| --- | --- |
+| `title` | Main post title shown on the blog page |
+| `excerpt` | Summary shown on the blog index |
+| `date` | Used for post metadata and ordering |
+| `readTime` | Small reading-time label |
+| `tags` | Rendered as badges on the post |
+
+## Example code block
 
 ```python
-def preprocess(frame):
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    return cv2.adaptiveThreshold(
-        blur,
-        255,
-        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-        cv2.THRESH_BINARY,
-        11,
-        2,
-    )
+def example():
+    return "Write your code snippets like this."
 ```
 
-## Typical checks
+## Example quote
 
-| Check | Why it matters |
-| --- | --- |
-| Confidence thresholds | Prevent unstable predictions from being logged |
-| Temporal smoothing | Reduces flicker in video-based measurements |
-| Sensor sanity bounds | Rejects impossible outputs before downstream actions |
+> Use this space for insights, takeaways, or important observations.
 
-> Reliable deployment usually comes from conservative validation, not just a stronger model.
+## Closing section
 
-Adding a new article only requires another markdown file in `content/posts`.
+End with a concise summary, lesson learned, or next step for the reader.

@@ -6,7 +6,9 @@ export type ContentBlockType =
   | "heading"
   | "image"
   | "code"
-  | "list";
+  | "list"
+  | "blockquote"
+  | "table";
 
 export interface ContentBlock {
   type: ContentBlockType;

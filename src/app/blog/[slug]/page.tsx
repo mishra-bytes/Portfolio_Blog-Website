@@ -85,6 +85,72 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
                 ))}
               </ul>
             );
+          case "blockquote":
+            return (
+              <blockquote
+                key={key}
+                className="rounded-r-lg border-l-4 border-blue-600 bg-slate-50 py-1 pl-4 italic text-slate-700"
+              >
+                {typeof block.value === "string" ? block.value : block.value.join(" ")}
+              </blockquote>
+            );
+          case "table": {
+            const rawTable =
+              typeof block.value === "string"
+                ? block.value.replace(/\\n/g, "\n")
+                : block.value.join("\n").replace(/\\n/g, "\n");
+
+            const rows = rawTable
+              .split("\n")
+              .map((row) => row.trim())
+              .filter((row) => row.length > 0 && !row.includes("---"))
+              .map((row) =>
+                row
+                  .split("|")
+                  .map((cell) => cell.trim())
+                  .filter((cell) => cell.length > 0),
+              )
+              .filter((row) => row.length > 0);
+
+            if (rows.length === 0) {
+              return null;
+            }
+
+            const [headers, ...bodyRows] = rows;
+
+            return (
+              <div key={key} className="my-8 overflow-x-auto">
+                <table className="w-full border-collapse text-left">
+                  <thead>
+                    <tr>
+                      {headers.map((header) => (
+                        <th
+                          key={`${key}-${header}`}
+                          className="border-b-2 border-slate-300 pb-2 pr-4 font-semibold text-slate-800"
+                        >
+                          {header}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bodyRows.map((row, rowIndex) => (
+                      <tr key={`${key}-row-${rowIndex}`}>
+                        {row.map((cell, cellIndex) => (
+                          <td
+                            key={`${key}-row-${rowIndex}-cell-${cellIndex}`}
+                            className="border-b border-slate-200 py-3 pr-4 text-slate-600"
+                          >
+                            {cell}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          }
           default:
             console.warn("Unsupported content block", block);
             return null;

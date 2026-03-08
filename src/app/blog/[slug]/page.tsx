@@ -320,13 +320,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     mainEntityOfPage: articleUrl,
     description: post.excerpt,
   };
-  const softCardClass =
-    "bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm sm:p-10 md:rounded-3xl md:p-14";
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-12 sm:px-6">
+    <div className="min-h-screen bg-[#fafafa]">
       <ProgressBar />
-      <main className="mx-auto flex max-w-4xl flex-col gap-8 md:gap-12">
+      <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 md:py-20">
         <a
           href="#article-content"
           className="sr-only rounded-md bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50"
@@ -334,12 +332,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           Skip to content
         </a>
 
-        <section className={softCardClass}>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-          />
-          <header className="space-y-5 border-b border-slate-200 pb-8 text-left">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+
+        <article>
+          <header className="space-y-5 border-b border-slate-100 pb-8 text-left">
             <Link
               href="/blog"
               className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-slate-800"
@@ -393,19 +392,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <div id="article-content">
             <BlockRenderer blocks={post.content} />
           </div>
-        </section>
+        </article>
 
         {otherPosts.length > 0 ? (
-          <section className={softCardClass}>
+          <section className="mt-32 border-t border-slate-100 pt-16">
             <PostSlider posts={recommendedPosts} />
           </section>
         ) : null}
 
-        <section className={softCardClass}>
+        <section className="mt-32 border-t border-slate-100 pt-16">
           <BlogComments slug={slug} />
         </section>
 
-        <section className={softCardClass}>
+        <section className="mt-32">
           <SubscribeForm />
         </section>
       </main>

@@ -8,7 +8,8 @@ export type ContentBlockType =
   | "code"
   | "list"
   | "blockquote"
-  | "table";
+  | "table"
+  | "github-file";
 
 export interface ContentBlock {
   type: ContentBlockType;
@@ -18,6 +19,9 @@ export interface ContentBlock {
   level?: 2 | 3;
   width?: number;
   height?: number;
+  repo?: string;
+  filePath?: string;
+  url?: string;
 }
 
 export interface BlogPost {

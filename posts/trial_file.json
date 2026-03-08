@@ -1,0 +1,73 @@
+{
+  "title": "Template: Optimizing Computer Vision for Edge Devices",
+  "slug": "template-cv-edge-deployment",
+  "date": "2026-03-08",
+  "excerpt": "A complete template demonstrating every available block type in our new Next.js JSON blog architecture, including GitHub cards, tables, and blockquotes.",
+  "content": [
+    {
+      "type": "paragraph",
+      "value": "When deploying machine learning models to edge devices, the constraints shift dramatically from raw accuracy to inference speed and memory management. This template demonstrates how to structure a technical write-up using all available JSON block types."
+    },
+    {
+      "type": "heading",
+      "value": "The Edge Computing Philosophy"
+    },
+    {
+      "type": "blockquote",
+      "value": "Hardware constraints breed software elegance. An optimized edge model doesn't just run faster; it forces the engineer to truly understand the data flowing through the network."
+    },
+    {
+      "type": "paragraph",
+      "value": "Before diving into the code, it is crucial to establish a baseline. We evaluate models based on their quantized size and latency."
+    },
+    {
+      "type": "table",
+      "value": "| Model Architecture | Float32 Size | INT8 Size | Inference Time (ms) |\n|---|---|---|---|\n| ResNet-50 | 98 MB | 25 MB | 145 ms |\n| MobileNetV2 | 14 MB | 3.5 MB | 32 ms |\n| Custom CNN (Ours) | 5 MB | 1.2 MB | 12 ms |"
+    },
+    {
+      "type": "heading",
+      "value": "Visualizing the Pipeline"
+    },
+    {
+      "type": "image",
+      "src": "/blog-images/placeholder.jpg",
+      "value": "A flowchart diagram showing the image processing pipeline from camera capture to MQTT transmission."
+    },
+    {
+      "type": "heading",
+      "value": "Implementation & Source Code"
+    },
+    {
+      "type": "paragraph",
+      "value": "The real optimization happens during frame pre-processing. If we can crop and threshold the image before it hits the neural network, we save precious compute cycles. You can view the full preprocessing script in the repository below:"
+    },
+    {
+      "type": "github-file",
+      "repo": "aditya-mishra/edge-cv-pipeline",
+      "filePath": "src/core/preprocess.py",
+      "url": "https://github.com/aditya-mishra/edge-cv-pipeline/blob/main/src/core/preprocess.py"
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import cv2\nimport numpy as np\nimport tflite_runtime.interpreter as tflite\n\ndef process_frame(frame):\n    # Convert to grayscale to reduce channel depth\n    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)\n    \n    # Resize to match model input\n    resized = cv2.resize(gray, (224, 224))\n    \n    # Normalize pixel values\n    normalized = resized.astype(np.float32) / 255.0\n    \n    # Add batch dimension for inference\n    input_data = np.expand_dims(normalized, axis=0)\n    return input_data"
+    },
+    {
+      "type": "heading",
+      "value": "Deployment Checklist"
+    },
+    {
+      "type": "paragraph",
+      "value": "Before flashing this to your IoT device, ensure you have completed the following steps to guarantee stable uptime:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Verify thermal throttling limits on the target hardware.",
+        "Test the INT8 quantized model against the validation set to check for severe accuracy degradation.",
+        "Ensure the camera buffer is being flushed correctly to prevent memory leaks.",
+        "Set up a daemon service (like systemd) to auto-restart the Python script on crash."
+      ]
+    }
+  ]
+}

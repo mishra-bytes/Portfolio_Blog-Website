@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BlogComments } from "@/components/blog/blog-comments";
 import { CodeBlock } from "@/components/blog/code-block";
+import { GithubFileCard } from "@/components/blog/github-file-card";
 import { getAllPosts, getPostBySlug, type ContentBlock } from "@/lib/posts";
 
 type BlogPostPageProps = {
@@ -188,6 +189,19 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
               </div>
             );
           }
+          case "github-file":
+            if (!block.url) {
+              return null;
+            }
+
+            return (
+              <GithubFileCard
+                key={key}
+                repo={block.repo}
+                filePath={block.filePath}
+                url={block.url}
+              />
+            );
           default:
             console.warn("Unsupported content block", block);
             return null;

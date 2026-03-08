@@ -6,7 +6,7 @@ import { BlogComments } from "@/components/blog/blog-comments";
 import { CodeBlock } from "@/components/blog/code-block";
 import { GithubFileCard } from "@/components/blog/github-file-card";
 import { PostSlider } from "@/components/blog/post-slider";
-import { SubscribeBanner } from "@/components/blog/subscribe-banner";
+import { SubscribeForm } from "@/components/blog/subscribe-form";
 import { formatBlogDate } from "@/lib/format-date";
 import { getAllPosts, getPostBySlug, type ContentBlock } from "@/lib/posts";
 
@@ -382,7 +382,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <div className="mx-auto mt-20 max-w-3xl border-t border-gray-200 pt-8">
             <BlogComments slug={slug} />
           </div>
-          <SubscribeBanner />
+          <SubscribeForm />
         </div>
       </article>
     </main>

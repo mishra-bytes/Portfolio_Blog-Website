@@ -492,6 +492,7 @@ export function BlogComments({ slug }: BlogCommentsProps) {
     () => sortCommentTree(buildCommentTree(comments)),
     [comments],
   );
+  const totalComments = comments.length;
 
   return (
     <section className="mx-auto max-w-3xl">
@@ -531,6 +532,12 @@ export function BlogComments({ slug }: BlogCommentsProps) {
       )}
 
       <div className="mt-8 space-y-4">
+        {totalComments > 0 ? (
+          <h3 className="mt-10 mb-6 border-b border-slate-200 pb-2 text-xl font-semibold text-slate-800">
+            Comments ({totalComments})
+          </h3>
+        ) : null}
+
         {isLoading ? (
           <div className="rounded-3xl border border-slate-200 bg-white px-5 py-6 text-sm text-slate-500 shadow-sm">
             Loading comments...

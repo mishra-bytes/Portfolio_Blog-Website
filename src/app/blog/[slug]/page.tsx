@@ -19,9 +19,8 @@ type BlockRendererProps = {
 function slugifyHeading(value: string) {
   return value
     .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-");
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
 }
 
 function BlockRenderer({ blocks }: BlockRendererProps) {
@@ -50,7 +49,7 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
                 <h3
                   key={key}
                   id={headingId}
-                  className="pt-4 text-2xl font-semibold tracking-[-0.03em] text-slate-900"
+                  className="scroll-mt-24 pt-4 text-2xl font-semibold tracking-[-0.03em] text-slate-900"
                 >
                   {headingText}
                 </h3>
@@ -61,7 +60,7 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
               <h2
                 key={key}
                 id={headingId}
-                className="pt-6 text-3xl font-semibold tracking-[-0.04em] text-slate-900"
+                className="scroll-mt-24 pt-6 text-3xl font-semibold tracking-[-0.04em] text-slate-900"
               >
                 {headingText}
               </h2>
@@ -303,11 +302,17 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </p>
           </header>
           {headings.length > 0 ? (
-            <aside className="mt-8 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-600">
-                Table of Contents
-              </p>
-              <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-800">
+            <details className="group mb-10 mt-8 rounded-xl border border-slate-200 bg-slate-50 p-5">
+              <summary className="list-none flex cursor-pointer items-center justify-between font-semibold text-slate-800">
+                <span>Table of Contents</span>
+                <span
+                  aria-hidden="true"
+                  className="transition-transform group-open:rotate-180"
+                >
+                  ▼
+                </span>
+              </summary>
+              <ul className="mt-4 space-y-2 text-sm text-slate-600">
                 {headings.map((heading) => (
                   <li
                     key={`${heading.level}-${heading.text}`}
@@ -315,14 +320,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   >
                     <a
                       href={`#${slugifyHeading(heading.text)}`}
-                      className="inline-flex min-h-11 items-center text-left font-medium text-slate-800 transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200"
+                      className="inline-flex min-h-11 items-center text-left font-medium text-slate-700 transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200"
                     >
                       {heading.text}
                     </a>
                   </li>
                 ))}
               </ul>
-            </aside>
+            </details>
           ) : null}
           <BlockRenderer blocks={post.content} />
           <div className="mx-auto mt-16 max-w-3xl border-t border-gray-200 pt-8">

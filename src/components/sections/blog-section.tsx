@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PostCard } from "@/components/blog/post-card";
+import { HomeBlogCarousel } from "@/components/home/home-blog-carousel";
 import { MotionReveal, MotionStagger, MotionStaggerItem } from "@/components/motion/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import type { BlogPostSummary } from "@/lib/posts";
@@ -25,18 +25,11 @@ export function BlogSection({ posts }: BlogSectionProps) {
             Browse all posts
           </Link>
         </MotionReveal>
-        <MotionStagger className="grid items-stretch gap-4 md:gap-5 lg:grid-cols-2">
-          {posts.map((post) => (
-            <MotionStaggerItem key={post.slug} className="h-full">
-              <PostCard post={post} />
-            </MotionStaggerItem>
-          ))}
+        <MotionStagger>
+          <MotionStaggerItem>
+            <HomeBlogCarousel posts={posts} />
+          </MotionStaggerItem>
         </MotionStagger>
-        <MotionReveal>
-          <div className="rounded-[1.5rem] border border-dashed border-white/12 bg-black/20 p-5 text-sm text-zinc-400">
-            Content folder: <code>posts</code>
-          </div>
-        </MotionReveal>
       </div>
     </section>
   );

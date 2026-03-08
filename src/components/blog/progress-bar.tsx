@@ -7,22 +7,34 @@ export function ProgressBar() {
 
   useEffect(() => {
     function updateProgress() {
-      const scrollHeight = document.body.scrollHeight - window.innerHeight;
+      const element = document.getElementById("article-content");
 
-      if (scrollHeight <= 0) {
+      if (!element) {
         setProgress(0);
         return;
       }
 
-      const percentage = (window.scrollY / scrollHeight) * 100;
-      setProgress(Math.min(Math.max(percentage, 0), 100));
+      const elementTop = element.getBoundingClientRect().top + window.scrollY;
+      const elementHeight = element.offsetHeight;
+      const currentScroll = window.scrollY - elementTop;
+      const scrollableDistance = elementHeight - window.innerHeight;
+
+      if (scrollableDistance <= 0) {
+        setProgress(currentScroll > 0 ? 100 : 0);
+        return;
+      }
+
+      const percentage = (currentScroll / scrollableDistance) * 100;
+      setProgress(Math.max(0, Math.min(100, percentage)));
     }
 
     updateProgress();
     window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
 
     return () => {
       window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("resize", updateProgress);
     };
   }, []);
 

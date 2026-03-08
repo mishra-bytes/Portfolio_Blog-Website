@@ -342,7 +342,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </Link>
       </nav>
       <article
-        id="article-content"
         className="blog-panel rounded-[2rem] px-6 py-10 sm:px-10 sm:py-12"
       >
         <script
@@ -399,7 +398,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </ul>
             </details>
           ) : null}
-          <BlockRenderer blocks={post.content} />
+          <div id="article-content">
+            <BlockRenderer blocks={post.content} />
+          </div>
           {otherPosts.length > 0 ? <PostSlider posts={recommendedPosts} /> : null}
           <div className="mx-auto mt-20 max-w-3xl border-t border-gray-200 pt-8">
             <BlogComments slug={slug} />

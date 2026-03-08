@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 import { getSupabaseAdminClient } from "@/lib/supabaseClient";
 
 export const dynamic = "force-dynamic";
@@ -6,6 +7,7 @@ export const dynamic = "force-dynamic";
 const MAX_NAME_LENGTH = 120;
 const MAX_EMAIL_LENGTH = 254;
 const MAX_COMMENT_LENGTH = 2000;
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 type PublicCommentRecord = {
   id: string;
@@ -104,9 +106,9 @@ export async function POST(request: NextRequest) {
   }
 
   if (!isOwner) {
-    if (!name || !email) {
+    if (!name) {
       return NextResponse.json(
-        { error: "Name and email are required." },
+        { error: "Name is required." },
         { status: 400 },
       );
     }
@@ -118,7 +120,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (email.length > MAX_EMAIL_LENGTH || !isValidEmail(email)) {
+    if (email && (email.length > MAX_EMAIL_LENGTH || !isValidEmail(email))) {
       return NextResponse.json(
         { error: "Please provide a valid email address." },
         { status: 400 },
@@ -149,6 +151,48 @@ export async function POST(request: NextRequest) {
         { error: error.message || "Unable to save comment." },
         { status: 500 },
       );
+    }
+
+    if (isOwner && parentId) {
+      try {
+        const { data: parentComment } = await supabase
+          .from("comments")
+          .select("author_name, author_email")
+          .eq("id", parentId)
+          .single();
+
+        if (parentComment && parentComment.author_email) {
+          const blogUrl =
+            process.env.SITE_URL?.replace(/\/+$/, "") ??
+            "https://aditya-mishra-blog-portfolio.vercel.app";
+
+          await resend.emails.send({
+            from:
+              process.env.RESEND_FROM_EMAIL ||
+              "Aditya Mishra <notifications@adimishra.tech>",
+            to: parentComment.author_email,
+            subject: "Aditya Mishra replied to your comment",
+            html: `
+              <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #222; max-width: 600px; margin: auto;">
+                <h2 style="margin-bottom: 10px;">New Reply.</h2>
+                <p>Hi ${parentComment.author_name},</p>
+                <p>Aditya Mishra just replied to your comment on the engineering blog.</p>
+                <p style="margin-top: 20px;">
+                  <a href="${blogUrl}/blog/${slug}" 
+                     style="display: inline-block; padding: 10px 16px; background-color: #111; color: #ffffff; text-decoration: none; border-radius: 6px;">
+                    View Reply
+                  </a>
+                </p>
+                <p style="margin-top: 30px; font-size: 14px; color: #666;">
+                  — Aditya Mishra
+                </p>
+              </div>
+            `,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to send reply notification email:", error);
+      }
     }
 
     return NextResponse.json(

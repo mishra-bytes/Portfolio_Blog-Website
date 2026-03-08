@@ -87,6 +87,7 @@ export function CommentForm({
           value={name}
           onChange={(event) => setName(event.target.value)}
           placeholder="Name"
+          required
           disabled={isSubmitting}
           className="w-full rounded-xl border border-slate-100 bg-slate-50 p-3 text-slate-800 outline-none transition-all placeholder:text-slate-400 focus:border-slate-300 focus:bg-white"
         />
@@ -94,7 +95,7 @@ export function CommentForm({
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="Email"
+          placeholder="Email (not shown)"
           disabled={isSubmitting}
           className="w-full rounded-xl border border-slate-100 bg-slate-50 p-3 text-slate-800 outline-none transition-all placeholder:text-slate-400 focus:border-slate-300 focus:bg-white"
         />

@@ -1,0 +1,26 @@
+{
+  "title": "Dummy Post: LSTM Ablation Notes for Battery Forecasting",
+  "slug": "dummy-lstm-ablation-notes",
+  "date": "2026-03-11T09:10:00+05:30",
+  "excerpt": "A compact dummy article for testing date ordering, related-post ranking, and long-form rendering around sequence models.",
+  "tags": ["Machine Learning", "Time Series", "LSTM"],
+  "content": [
+    {
+      "type": "paragraph",
+      "value": "This placeholder post exists to validate recommendation quality around time-series and model-comparison content."
+    },
+    {
+      "type": "heading",
+      "value": "Why ablations matter",
+      "level": 2
+    },
+    {
+      "type": "list",
+      "value": [
+        "They expose which features actually move the metric.",
+        "They prevent accidental complexity from looking like improvement.",
+        "They make iteration more defensible."
+      ]
+    }
+  ]
+}

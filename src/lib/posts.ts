@@ -29,6 +29,7 @@ export interface BlogPost {
   slug: string;
   date: string;
   excerpt: string;
+  coverImage?: string;
   tags?: string[];
   content: ContentBlock[];
 }
@@ -105,6 +106,7 @@ export function getAllPosts(): BlogPostSummary[] {
         slug: post.slug,
         date: post.date,
         excerpt: post.excerpt,
+        coverImage: post.coverImage,
         tags: post.tags ?? [],
       };
     })

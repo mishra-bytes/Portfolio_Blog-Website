@@ -1,0 +1,26 @@
+{
+  "title": "Dummy Post: Data Leakage Checklist Before You Train",
+  "slug": "dummy-data-leakage-checklist",
+  "date": "2026-03-12T08:20:00+05:30",
+  "excerpt": "A validation-oriented dummy write-up for testing list-heavy content and relatedness around model evaluation topics.",
+  "tags": ["Machine Learning", "Evaluation", "Data Quality"],
+  "content": [
+    {
+      "type": "heading",
+      "value": "A fast leakage scan",
+      "level": 2
+    },
+    {
+      "type": "list",
+      "value": [
+        "Check whether target-derived columns leak into features.",
+        "Verify time-based splits when timestamps exist.",
+        "Confirm feature engineering is fit only on training data."
+      ]
+    },
+    {
+      "type": "paragraph",
+      "value": "If a metric feels suspiciously strong, leakage is often a better first hypothesis than breakthrough."
+    }
+  ]
+}

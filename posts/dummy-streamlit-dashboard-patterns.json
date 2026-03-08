@@ -1,0 +1,23 @@
+{
+  "title": "Dummy Post: Streamlit Dashboard Patterns for ML Teams",
+  "slug": "dummy-streamlit-dashboard-patterns",
+  "date": "2026-03-11T18:05:00+05:30",
+  "excerpt": "A lightweight post for testing software-productivity topics and end-to-end app documentation within the JSON blog system.",
+  "tags": ["Software Engineering", "Streamlit", "MLOps"],
+  "content": [
+    {
+      "type": "paragraph",
+      "value": "Dashboards are often the fastest way to validate whether an ML system is actually useful to non-ML stakeholders."
+    },
+    {
+      "type": "heading",
+      "value": "What a good internal dashboard does",
+      "level": 2
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import streamlit as st\\n\\nst.title('Model Health')\\nst.metric('Latency p95', '184 ms')\\nst.metric('Error Rate', '0.7%')"
+    }
+  ]
+}

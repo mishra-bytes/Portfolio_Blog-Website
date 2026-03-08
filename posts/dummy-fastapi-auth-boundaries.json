@@ -1,0 +1,24 @@
+{
+  "title": "Dummy Post: FastAPI Auth Boundaries in Small ML Products",
+  "slug": "dummy-fastapi-auth-boundaries",
+  "date": "2026-03-12T11:55:00+05:30",
+  "excerpt": "A mock backend engineering post for checking how API-heavy topics appear on the index and in the explore slider.",
+  "tags": ["Software Engineering", "FastAPI", "Backend"],
+  "content": [
+    {
+      "type": "paragraph",
+      "value": "Most internal ML tools begin as quick prototypes and gradually become products that need real security boundaries."
+    },
+    {
+      "type": "heading",
+      "value": "Where auth often breaks down",
+      "level": 2
+    },
+    {
+      "type": "github-file",
+      "repo": "mishra-bytes/Portfolio_Blog-Website",
+      "filePath": "src/app/api/subscribe/route.ts",
+      "url": "https://github.com/mishra-bytes/Portfolio_Blog-Website/blob/main/src/app/api/subscribe/route.ts"
+    }
+  ]
+}

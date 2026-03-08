@@ -1,0 +1,22 @@
+{
+  "title": "Dummy Post: CNN Error Analysis Beyond Accuracy",
+  "slug": "dummy-cnn-error-analysis",
+  "date": "2026-03-12T16:30:00+05:30",
+  "excerpt": "A synthetic post to test article cards for computer vision evaluation and failure-analysis content.",
+  "tags": ["Computer Vision", "Deep Learning", "Evaluation"],
+  "content": [
+    {
+      "type": "paragraph",
+      "value": "Accuracy compresses many failure modes into one number. Error analysis re-expands them into something actionable."
+    },
+    {
+      "type": "heading",
+      "value": "Useful slices",
+      "level": 2
+    },
+    {
+      "type": "table",
+      "value": "| Slice | Why inspect it |\\n|---|---|\\n| Low light | Tests robustness to weak signal |\\n| Occlusion | Reveals localization failure |\\n| Edge cases | Highlights blind spots |"
+    }
+  ]
+}

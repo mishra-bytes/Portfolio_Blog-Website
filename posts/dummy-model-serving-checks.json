@@ -1,0 +1,21 @@
+{
+  "title": "Dummy Post: Model Serving Checks Before Launch",
+  "slug": "dummy-model-serving-checks",
+  "date": "2026-03-13T13:40:00+05:30",
+  "excerpt": "A placeholder launch-readiness note to stress test the blog index with more operational engineering content.",
+  "tags": ["MLOps", "Inference", "Backend"],
+  "content": [
+    {
+      "type": "paragraph",
+      "value": "Serving checks are boring right up until the model starts timing out in production and no one knows which stage regressed."
+    },
+    {
+      "type": "list",
+      "value": [
+        "Track warm and cold latency separately.",
+        "Measure payload-size sensitivity.",
+        "Keep health checks cheap and deterministic."
+      ]
+    }
+  ]
+}

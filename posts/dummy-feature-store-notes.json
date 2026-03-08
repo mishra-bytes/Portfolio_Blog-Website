@@ -1,0 +1,22 @@
+{
+  "title": "Dummy Post: Feature Store Notes for Small Teams",
+  "slug": "dummy-feature-store-notes",
+  "date": "2026-03-13T07:25:00+05:30",
+  "excerpt": "A practical placeholder article for validating architecture-related recommendations and general ML platform topics.",
+  "tags": ["MLOps", "Machine Learning", "Data Engineering"],
+  "content": [
+    {
+      "type": "heading",
+      "value": "When a feature store helps",
+      "level": 2
+    },
+    {
+      "type": "paragraph",
+      "value": "The main benefit is not buzzword compliance. It is consistency between training-time and serving-time feature definitions."
+    },
+    {
+      "type": "blockquote",
+      "value": "A shared feature definition is often more valuable than a larger model."
+    }
+  ]
+}

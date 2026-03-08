@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { PostCard } from "@/components/blog/post-card";
-import { formatBlogDate } from "@/lib/format-date";
+import { BlogList } from "@/components/blog/blog-list";
 import { getAllPosts } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -31,15 +30,8 @@ export default function BlogPage() {
           </p>
         </div>
       </section>
-      <section className="grid gap-4 md:gap-6">
-        {sortedPosts.map((post, index) => (
-          <PostCard
-            key={post.slug}
-            post={post}
-            formattedDate={formatBlogDate(post.date)}
-            isLatest={index === 0}
-          />
-        ))}
+      <section>
+        <BlogList posts={sortedPosts} />
       </section>
     </main>
   );

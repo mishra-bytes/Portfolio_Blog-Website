@@ -1,0 +1,22 @@
+{
+  "title": "Dummy Post: Latency Budgeting for Edge Deployment",
+  "slug": "dummy-edge-deployment-latency",
+  "date": "2026-03-13T22:05:00+05:30",
+  "excerpt": "A final dummy post to expand the dataset for scrolling, sorting, and related-post behavior on larger collections.",
+  "tags": ["Computer Vision", "Edge AI", "Inference"],
+  "content": [
+    {
+      "type": "paragraph",
+      "value": "Latency budgets become easier to manage once every stage of the pipeline is measured independently instead of hiding behind a single average."
+    },
+    {
+      "type": "heading",
+      "value": "Where the milliseconds go",
+      "level": 2
+    },
+    {
+      "type": "table",
+      "value": "| Stage | Budget |\\n|---|---|\\n| Capture | 8 ms |\\n| Preprocessing | 12 ms |\\n| Inference | 20 ms |\\n| Postprocessing | 6 ms |"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "title": "Dummy Post: Bayesian Tuning Summary for Sequence Models",
+  "slug": "dummy-bayesian-tuning-summary",
+  "date": "2026-03-12T21:00:00+05:30",
+  "excerpt": "A short dummy note to validate recommendation overlap with battery forecasting and hyperparameter search topics.",
+  "tags": ["Machine Learning", "Bayesian Optimization", "LSTM"],
+  "content": [
+    {
+      "type": "paragraph",
+      "value": "Bayesian search is most useful when every training run is expensive enough that random guessing becomes wasteful."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "search_space = {\\n  'hidden_size': [32, 64, 128],\\n  'dropout': [0.1, 0.2, 0.3],\\n  'lr': [1e-3, 5e-4]\\n}"
+    }
+  ]
+}

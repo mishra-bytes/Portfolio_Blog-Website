@@ -1,0 +1,26 @@
+{
+  "title": "Dummy Post: Annotation Guidelines for Vision Datasets",
+  "slug": "dummy-vision-annotation-guidelines",
+  "date": "2026-03-13T18:15:00+05:30",
+  "excerpt": "A computer-vision placeholder post for checking richer recommendation behavior across labeling and data quality topics.",
+  "tags": ["Computer Vision", "Data Quality", "Annotation"],
+  "content": [
+    {
+      "type": "paragraph",
+      "value": "Most annotation problems surface later as model-quality problems, even though the root cause is usually inconsistent labeling policy."
+    },
+    {
+      "type": "heading",
+      "value": "Three rules for label consistency",
+      "level": 2
+    },
+    {
+      "type": "list",
+      "value": [
+        "Document ambiguous cases explicitly.",
+        "Audit inter-annotator disagreement early.",
+        "Version guideline changes over time."
+      ]
+    }
+  ]
+}

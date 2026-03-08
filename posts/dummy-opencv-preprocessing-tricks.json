@@ -1,0 +1,26 @@
+{
+  "title": "Dummy Post: OpenCV Preprocessing Tricks for Noisy Inputs",
+  "slug": "dummy-opencv-preprocessing-tricks",
+  "date": "2026-03-11T12:45:00+05:30",
+  "excerpt": "A test article focused on computer vision preprocessing so the blog can surface a second technical cluster in recommendations.",
+  "tags": ["Computer Vision", "OpenCV", "Preprocessing"],
+  "content": [
+    {
+      "type": "paragraph",
+      "value": "Many vision pipelines fail before the model sees the frame. Preprocessing quality is often the first and best optimization lever."
+    },
+    {
+      "type": "blockquote",
+      "value": "A blurry input cannot be rescued by a confident output."
+    },
+    {
+      "type": "heading",
+      "value": "Practical filters",
+      "level": 2
+    },
+    {
+      "type": "table",
+      "value": "| Operation | Use case |\\n|---|---|\\n| Thresholding | High-contrast digit regions |\\n| Morphological opening | Noise cleanup |\\n| CLAHE | Uneven lighting compensation |"
+    }
+  ]
+}

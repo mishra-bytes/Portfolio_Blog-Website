@@ -5,9 +5,9 @@ import {
   useEffect,
   useMemo,
   useState,
-  type KeyboardEvent,
   type MouseEvent,
 } from "react";
+import { CommentForm } from "@/components/blog/comment-form";
 import { getSupabaseBrowserClient } from "@/lib/supabaseBrowserClient";
 
 type BlogCommentsProps = {
@@ -17,20 +17,22 @@ type BlogCommentsProps = {
 type CommentRow = {
   id: string;
   slug: string;
-  name: string | null;
+  author_name: string | null;
   content: string;
   created_at: string;
   parent_id: string | null;
+  is_author: boolean | null;
   upvotes: number | null;
 };
 
 type DiscussionComment = {
   id: string;
   slug: string;
-  name: string;
+  author_name: string;
   content: string;
   created_at: string;
   parent_id: string | null;
+  is_author: boolean;
   upvotes: number;
   replies: DiscussionComment[];
 };
@@ -38,7 +40,7 @@ type DiscussionComment = {
 type CommentItemProps = {
   comment: DiscussionComment;
   slug: string;
-  onReplySubmitted: () => Promise<void>;
+  onRefresh: () => Promise<void>;
 };
 
 function ShieldIcon() {
@@ -126,31 +128,32 @@ function formatCommentDate(value: string) {
 }
 
 function buildCommentTree(rows: CommentRow[]) {
-  const nodes = new Map<string, DiscussionComment>();
+  const commentMap = new Map<string, DiscussionComment>();
   const rootComments: DiscussionComment[] = [];
 
   for (const row of rows) {
-    nodes.set(row.id, {
+    commentMap.set(row.id, {
       id: row.id,
       slug: row.slug,
-      name: row.name?.trim() || "Reader",
+      author_name: row.author_name?.trim() || "Reader",
       content: row.content,
       created_at: row.created_at,
       parent_id: row.parent_id,
+      is_author: Boolean(row.is_author),
       upvotes: row.upvotes ?? 0,
       replies: [],
     });
   }
 
   for (const row of rows) {
-    const node = nodes.get(row.id);
+    const node = commentMap.get(row.id);
 
     if (!node) {
       continue;
     }
 
     if (row.parent_id) {
-      const parent = nodes.get(row.parent_id);
+      const parent = commentMap.get(row.parent_id);
 
       if (parent) {
         parent.replies.push(node);
@@ -164,14 +167,12 @@ function buildCommentTree(rows: CommentRow[]) {
   return rootComments;
 }
 
-function CommentItem({ comment, slug, onReplySubmitted }: CommentItemProps) {
+function CommentItem({ comment, slug, onRefresh }: CommentItemProps) {
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
   const [upvotes, setUpvotes] = useState(comment.upvotes);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
-  const [replyValue, setReplyValue] = useState("");
-  const [isSubmittingReply, setIsSubmittingReply] = useState(false);
 
   useEffect(() => {
     setUpvotes(comment.upvotes);
@@ -209,47 +210,6 @@ function CommentItem({ comment, slug, onReplySubmitted }: CommentItemProps) {
     }
   }
 
-  async function submitReply() {
-    const content = replyValue.trim();
-
-    if (!content || isSubmittingReply) {
-      return;
-    }
-
-    setIsSubmittingReply(true);
-
-    try {
-      const { error } = await supabase.from("comments").insert({
-        slug,
-        content,
-        parent_id: comment.id,
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      setReplyValue("");
-      setIsReplying(false);
-      await onReplySubmitted();
-    } catch (error) {
-      console.error("Failed to submit reply:", error);
-    } finally {
-      setIsSubmittingReply(false);
-    }
-  }
-
-  async function handleReplyKeyDown(
-    event: KeyboardEvent<HTMLInputElement>,
-  ) {
-    if (event.key !== "Enter") {
-      return;
-    }
-
-    event.preventDefault();
-    await submitReply();
-  }
-
   const replyCount = comment.replies.length;
 
   return (
@@ -257,12 +217,19 @@ function CommentItem({ comment, slug, onReplySubmitted }: CommentItemProps) {
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-start gap-4">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700">
-            {getInitials(comment.name)}
+            {getInitials(comment.author_name)}
           </div>
 
           <div className="min-w-0">
             <div className="flex flex-wrap items-center text-sm">
-              <span className="font-medium text-slate-900">{comment.name}</span>
+              <span className="font-medium text-slate-900">
+                {comment.author_name}
+              </span>
+              {comment.is_author ? (
+                <span className="ml-2 rounded-full bg-slate-800 px-2 py-0.5 text-xs font-medium tracking-wide text-white">
+                  Author
+                </span>
+              ) : null}
             </div>
             <p className="mt-1 text-sm text-slate-500">
               {formatCommentDate(comment.created_at)}
@@ -273,7 +240,7 @@ function CommentItem({ comment, slug, onReplySubmitted }: CommentItemProps) {
         <button
           type="button"
           className="inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition-colors hover:text-slate-600"
-          aria-label={`More actions for ${comment.name}`}
+          aria-label={`More actions for ${comment.author_name}`}
         >
           <MoreMenuIcon />
         </button>
@@ -322,17 +289,14 @@ function CommentItem({ comment, slug, onReplySubmitted }: CommentItemProps) {
       </div>
 
       {isReplying ? (
-        <div className="mt-4 flex items-start gap-3">
-          <div className="h-8 w-8 shrink-0 rounded-full bg-slate-200" />
-          <input
-            type="text"
-            value={replyValue}
-            onChange={(event) => setReplyValue(event.target.value)}
-            onKeyDown={handleReplyKeyDown}
-            placeholder="Write a reply..."
-            className="flex-grow rounded-lg border border-slate-100 bg-slate-50 p-2 text-sm text-slate-700 outline-none transition-colors focus:border-slate-300"
-            autoFocus
-            disabled={isSubmittingReply}
+        <div className="mt-6">
+          <CommentForm
+            slug={slug}
+            parentId={comment.id}
+            onSuccess={async () => {
+              setIsReplying(false);
+              await onRefresh();
+            }}
           />
         </div>
       ) : null}
@@ -344,7 +308,7 @@ function CommentItem({ comment, slug, onReplySubmitted }: CommentItemProps) {
               key={reply.id}
               comment={reply}
               slug={slug}
-              onReplySubmitted={onReplySubmitted}
+              onRefresh={onRefresh}
             />
           ))}
         </div>
@@ -354,7 +318,6 @@ function CommentItem({ comment, slug, onReplySubmitted }: CommentItemProps) {
 }
 
 export function BlogComments({ slug }: BlogCommentsProps) {
-  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
   const [comments, setComments] = useState<CommentRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUnavailable, setIsUnavailable] = useState(false);
@@ -364,24 +327,31 @@ export function BlogComments({ slug }: BlogCommentsProps) {
     setIsUnavailable(false);
 
     try {
-      const { data, error } = await supabase
-        .from("comments")
-        .select("id, slug, name, content, created_at, parent_id, upvotes")
-        .eq("slug", slug)
-        .order("created_at", { ascending: true });
+      const response = await fetch(
+        `/api/comments?slug=${encodeURIComponent(slug)}`,
+        {
+          method: "GET",
+          cache: "no-store",
+        },
+      );
 
-      if (error) {
-        throw error;
+      const result = (await response.json()) as {
+        comments?: CommentRow[];
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(result.error ?? "Unable to load comments.");
       }
 
-      setComments((data ?? []) as CommentRow[]);
+      setComments(result.comments ?? []);
     } catch (error) {
       console.error("Failed to load comments:", error);
       setIsUnavailable(true);
     } finally {
       setIsLoading(false);
     }
-  }, [slug, supabase]);
+  }, [slug]);
 
   useEffect(() => {
     void loadComments();
@@ -404,12 +374,12 @@ export function BlogComments({ slug }: BlogCommentsProps) {
         </div>
       </div>
 
-      <div className="mt-8 flex items-start gap-4">
-        <div className="h-10 w-10 shrink-0 rounded-full bg-slate-200" />
-        <div className="flex-grow rounded-xl border border-slate-100 bg-slate-50 p-4 text-slate-400">
-          What are your thoughts?
-        </div>
-      </div>
+      <CommentForm
+        slug={slug}
+        onSuccess={async () => {
+          await loadComments();
+        }}
+      />
 
       <div className="mt-12">
         {isLoading ? (
@@ -428,7 +398,7 @@ export function BlogComments({ slug }: BlogCommentsProps) {
               key={comment.id}
               comment={comment}
               slug={slug}
-              onReplySubmitted={loadComments}
+              onRefresh={loadComments}
             />
           ))
         )}

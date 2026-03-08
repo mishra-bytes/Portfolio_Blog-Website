@@ -50,21 +50,16 @@ export async function POST(request: Request) {
           "Aditya Mishra <notifications@adimishra.tech>",
         to: email,
         subject: "Welcome to the loop. 🚀",
-        html: `
-          <div style="font-family: Arial, sans-serif; color: #0f172a; line-height: 1.6;">
-            <h2 style="margin-bottom: 12px;">Welcome to the Engineering Blog</h2>
-            <p style="margin: 0 0 12px;">
-              Thanks for subscribing. I'll be sending my latest technical write-ups on ML,
-              Computer Vision, and system design straight to this inbox.
-            </p>
-            <p style="margin: 0 0 12px;">
-              You can check out my latest projects on
-              <a href="https://github.com/aditya-mishra" style="color: #2563eb;">GitHub</a>
-              in the meantime.
-            </p>
-            <p style="margin: 0;">- Aditya Mishra</p>
-          </div>
-        `,
+        html: `<div style="font-family: Arial, Helvetica, sans-serif; line-height:1.6; color:#222; max-width:600px; margin:auto;">
+  <h2 style="margin-bottom:10px;">Welcome.</h2>
+  <p>Thank you for subscribing.</p>
+  <p>This blog is where I document things I learn while building machine learning systems and experimenting with real-world data. Most posts focus on practical work in computer vision, deep learning, and ML engineering.</p>
+  <p>Some of the insights shared here come from my experience working on machine learning systems at the <strong>Indian Meteorological Department</strong>, as well as my current work as a Machine Learning Engineer at <strong>DUSQ</strong>.</p>
+  <p>Expect practical breakdowns, technical deep dives, and lessons learned while building ML systems beyond textbook examples.</p>
+  <p style="margin-top:20px;">You can explore the blog here:</p>
+  <p><a href="https://aditya-mishra-blog-portfolio.vercel.app/blog" style="display:inline-block; padding:10px 16px; background-color:#111; color:#ffffff; text-decoration:none; border-radius:6px;">Read the Blog</a></p>
+  <p style="margin-top:30px;">— Aditya Mishra</p>
+</div>`,
       });
     } catch (resendError) {
       console.error("Failed to send welcome email:", resendError);

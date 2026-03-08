@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { BlogComments } from "@/components/blog/blog-comments";
 import { CodeBlock } from "@/components/blog/code-block";
 import { GithubFileCard } from "@/components/blog/github-file-card";
+import { SubscribeBanner } from "@/components/blog/subscribe-banner";
 import { formatBlogDate } from "@/lib/format-date";
 import { getAllPosts, getPostBySlug, type ContentBlock } from "@/lib/posts";
 
@@ -261,6 +262,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const articleUrl = `${process.env.SITE_URL ?? "http://localhost:3000"}/blog/${post.slug}`;
   const formattedDate = formatBlogDate(post.date);
+  const relatedPosts = getAllPosts()
+    .filter((candidate) => candidate.slug !== post.slug)
+    .slice(0, 2);
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -346,9 +350,50 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </details>
           ) : null}
           <BlockRenderer blocks={post.content} />
-          <div className="mx-auto mt-16 max-w-3xl border-t border-gray-200 pt-8">
+          {relatedPosts.length > 0 ? (
+            <section className="mt-16 border-t border-slate-200 pt-12">
+              <h2 className="mb-8 text-2xl font-bold text-slate-800">
+                Explore more writing
+              </h2>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {relatedPosts.map((relatedPost) => (
+                  <article
+                    key={relatedPost.slug}
+                    className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
+                  >
+                    <div>
+                      <p className="text-sm text-slate-500">
+                        {formatBlogDate(relatedPost.date)}
+                      </p>
+                      <h3 className="mt-3 text-xl font-semibold text-slate-900">
+                        <Link
+                          href={`/blog/${relatedPost.slug}`}
+                          className="transition hover:text-blue-700"
+                        >
+                          {relatedPost.title}
+                        </Link>
+                      </h3>
+                      <p className="mt-3 line-clamp-2 text-sm leading-7 text-slate-600">
+                        {relatedPost.excerpt}
+                      </p>
+                    </div>
+                    <div className="mt-6">
+                      <Link
+                        href={`/blog/${relatedPost.slug}`}
+                        className="inline-flex min-h-11 items-center text-sm font-medium text-blue-700 transition hover:text-blue-800"
+                      >
+                        Read article -&gt;
+                      </Link>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
+          <div className="mx-auto mt-20 max-w-3xl border-t border-gray-200 pt-8">
             <BlogComments slug={slug} />
           </div>
+          <SubscribeBanner />
         </div>
       </article>
     </main>

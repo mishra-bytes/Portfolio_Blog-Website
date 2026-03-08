@@ -320,46 +320,36 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     mainEntityOfPage: articleUrl,
     description: post.excerpt,
   };
+  const softCardClass =
+    "bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm sm:p-10 md:rounded-3xl md:p-14";
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-0">
+    <div className="min-h-screen bg-slate-50 px-4 py-12 sm:px-6">
       <ProgressBar />
-      <a
-        href="#article-content"
-        className="sr-only rounded-md bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50"
-      >
-        Skip to content
-      </a>
-      <nav aria-label="Back to blog" className="pt-5 sm:pt-6">
-        <Link
-          href="/blog"
-          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#d7dee7] bg-white px-4 py-2.5 text-sm font-medium text-[#334155] shadow-sm transition-all duration-200 hover:border-[#93c5fd] hover:text-blue-700 hover:shadow-md"
+      <main className="mx-auto flex max-w-4xl flex-col gap-8 md:gap-12">
+        <a
+          href="#article-content"
+          className="sr-only rounded-md bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50"
         >
-          <span aria-hidden="true" className="text-base leading-none">
-            &larr;
-          </span>
-          <span>Back to Blog</span>
-        </Link>
-      </nav>
-      <article
-        className="blog-panel rounded-[2rem] px-6 py-10 sm:px-10 sm:py-12"
-      >
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-        <div className="mx-auto max-w-[70ch]">
-          <header className="space-y-5 border-b blog-divider pb-8 text-left">
+          Skip to content
+        </a>
+
+        <section className={softCardClass}>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          />
+          <header className="space-y-5 border-b border-slate-200 pb-8 text-left">
             <Link
               href="/blog"
               className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-slate-800"
             >
-              ← Back to all posts
+              &larr; Back to all posts
             </Link>
-            <h1 className="max-w-[18ch] text-4xl font-semibold tracking-[-0.05em] text-[#0f172a] sm:text-5xl">
+            <h1 className="max-w-[18ch] text-4xl font-semibold tracking-[-0.05em] text-slate-900 sm:text-5xl">
               {post.title}
             </h1>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-800">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-700">
               <span className="font-medium text-slate-900">By Aditya Mishra</span>
               <span aria-hidden="true" className="text-slate-400">
                 &bull;
@@ -370,8 +360,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {post.excerpt}
             </p>
           </header>
+
           {headings.length > 0 ? (
-            <details className="group mb-10 mt-8 rounded-xl border border-slate-200 bg-slate-50 p-5">
+            <details className="group mt-8 rounded-xl border border-slate-200 bg-slate-50 p-5">
               <summary className="list-none flex cursor-pointer items-center justify-between font-semibold text-slate-800">
                 <span>Table of Contents</span>
                 <span
@@ -398,16 +389,26 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </ul>
             </details>
           ) : null}
+
           <div id="article-content">
             <BlockRenderer blocks={post.content} />
           </div>
-          {otherPosts.length > 0 ? <PostSlider posts={recommendedPosts} /> : null}
-          <div className="mx-auto mt-20 max-w-3xl border-t border-gray-200 pt-8">
-            <BlogComments slug={slug} />
-          </div>
+        </section>
+
+        {otherPosts.length > 0 ? (
+          <section className={softCardClass}>
+            <PostSlider posts={recommendedPosts} />
+          </section>
+        ) : null}
+
+        <section className={softCardClass}>
+          <BlogComments slug={slug} />
+        </section>
+
+        <section className={softCardClass}>
           <SubscribeForm />
-        </div>
-      </article>
-    </main>
+        </section>
+      </main>
+    </div>
   );
 }

@@ -25,7 +25,7 @@ export function PostSlider({ posts }: PostSliderProps) {
   }
 
   return (
-    <section className="mt-16 border-t border-slate-200 pt-12">
+    <section>
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-2xl font-bold text-slate-800">
           Explore more writing
@@ -61,7 +61,7 @@ export function PostSlider({ posts }: PostSliderProps) {
             key={post.slug}
             className="min-w-[300px] max-w-[400px] flex-shrink-0 snap-start md:min-w-[350px]"
           >
-            <article className="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <article className="h-full rounded-xl border border-slate-100 bg-slate-50 p-6 transition-colors hover:border-blue-200">
               <div>
                 <p className="text-sm text-slate-500">
                   {formatBlogDate(post.date)}

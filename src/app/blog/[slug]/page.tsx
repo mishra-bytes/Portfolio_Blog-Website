@@ -6,6 +6,7 @@ import { BlogComments } from "@/components/blog/blog-comments";
 import { CodeBlock } from "@/components/blog/code-block";
 import { GithubFileCard } from "@/components/blog/github-file-card";
 import { PostSlider } from "@/components/blog/post-slider";
+import { ProgressBar } from "@/components/blog/progress-bar";
 import { SubscribeForm } from "@/components/blog/subscribe-form";
 import { formatBlogDate } from "@/lib/format-date";
 import { getAllPosts, getPostBySlug, type ContentBlock } from "@/lib/posts";
@@ -90,7 +91,14 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
           }
           case "image": {
             if (!block.src) {
-              return null;
+              return (
+                <div
+                  key={key}
+                  className="rounded-md bg-red-50 p-4 text-sm text-red-500"
+                >
+                  Error: Image source missing
+                </div>
+              );
             }
 
             const width = block.width ?? 1600;
@@ -204,7 +212,14 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
           }
           case "github-file":
             if (!block.url) {
-              return null;
+              return (
+                <div
+                  key={key}
+                  className="rounded-md bg-red-50 p-4 text-sm text-red-500"
+                >
+                  Error: GitHub file URL missing
+                </div>
+              );
             }
 
             return (
@@ -308,6 +323,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-0">
+      <ProgressBar />
       <a
         href="#article-content"
         className="sr-only rounded-md bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50"
@@ -335,6 +351,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         />
         <div className="mx-auto max-w-[70ch]">
           <header className="space-y-5 border-b blog-divider pb-8 text-left">
+            <Link
+              href="/blog"
+              className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-slate-800"
+            >
+              ← Back to all posts
+            </Link>
             <h1 className="max-w-[18ch] text-4xl font-semibold tracking-[-0.05em] text-[#0f172a] sm:text-5xl">
               {post.title}
             </h1>

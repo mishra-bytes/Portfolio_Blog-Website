@@ -53,7 +53,8 @@ export function PostSlider({ posts }: PostSliderProps) {
       </div>
       <div
         ref={scrollRef}
-        className="hide-scrollbar flex gap-6 overflow-x-auto snap-x snap-mandatory pb-8 pt-4"
+        className="hide-scrollbar flex gap-6 overflow-x-auto px-4 pt-4 pb-8 snap-x snap-mandatory md:px-0"
+        style={{ scrollPaddingInlineStart: "1rem" }}
       >
         {posts.map((post) => (
           <div

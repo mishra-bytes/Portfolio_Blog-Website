@@ -424,6 +424,7 @@ export function BlogComments({ slug }: BlogCommentsProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUnavailable, setIsUnavailable] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -431,6 +432,7 @@ export function BlogComments({ slug }: BlogCommentsProps) {
     async function loadComments() {
       setIsLoading(true);
       setError(null);
+      setIsUnavailable(false);
 
       try {
         const response = await fetch(
@@ -462,10 +464,11 @@ export function BlogComments({ slug }: BlogCommentsProps) {
           return;
         }
 
+        setIsUnavailable(true);
         setError(
           loadError instanceof Error
             ? loadError.message
-            : "Unable to load comments.",
+            : "Comments are temporarily unavailable.",
         );
       } finally {
         if (!controller.signal.aborted) {
@@ -541,6 +544,10 @@ export function BlogComments({ slug }: BlogCommentsProps) {
         {isLoading ? (
           <div className="rounded-3xl border border-slate-200 bg-white px-5 py-6 text-sm text-slate-500 shadow-sm">
             Loading comments...
+          </div>
+        ) : isUnavailable ? (
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-center text-slate-500">
+            Comments are temporarily unavailable.
           </div>
         ) : error ? (
           <div className="rounded-3xl border border-red-200 bg-red-50 px-5 py-6 text-sm text-red-700">

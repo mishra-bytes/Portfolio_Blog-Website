@@ -3,14 +3,21 @@ import type { BlogPostSummary } from "@/lib/posts";
 
 type PostCardProps = {
   post: BlogPostSummary;
+  formattedDate?: string;
   isLatest?: boolean;
 };
 
-export function PostCard({ post, isLatest = false }: PostCardProps) {
+export function PostCard({
+  post,
+  formattedDate,
+  isLatest = false,
+}: PostCardProps) {
   return (
     <article className="blog-panel flex h-full flex-col rounded-[1.5rem] p-6 sm:p-7">
       <div className="mb-3 flex items-center gap-3">
-        <span className="text-sm text-slate-500">{post.date}</span>
+        <span className="text-sm text-slate-500">
+          {formattedDate ?? post.date}
+        </span>
         {isLatest ? (
           <span className="rounded-full border border-blue-100 bg-blue-50 px-2.5 py-0.5 text-xs font-semibold tracking-wide text-blue-600">
             LATEST

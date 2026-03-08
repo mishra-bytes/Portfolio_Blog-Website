@@ -1,7 +1,7 @@
 {
   "title": "All About Overfitting in Machine Learning: Meaning, Examples, and Why It Matters",
   "slug": "overfitting-in-machine-learning",
-  "date": "2026-03-08",
+  "date": "2026-03-08T04:32:00+05:30",
   "excerpt": "Overfitting is the classic bait-and-switch of machine learning: dazzling training accuracy that vanishes on unseen data. Learn what it is, why it happens, how to spot it, and when it might even be useful.",
   "content": [
     {

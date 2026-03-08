@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { BlogComments } from "@/components/blog/blog-comments";
 import { CodeBlock } from "@/components/blog/code-block";
 import { GithubFileCard } from "@/components/blog/github-file-card";
+import { formatBlogDate } from "@/lib/format-date";
 import { getAllPosts, getPostBySlug, type ContentBlock } from "@/lib/posts";
 
 type BlogPostPageProps = {
@@ -259,6 +260,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     }));
 
   const articleUrl = `${process.env.SITE_URL ?? "http://localhost:3000"}/blog/${post.slug}`;
+  const formattedDate = formatBlogDate(post.date);
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -309,7 +311,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <span aria-hidden="true" className="text-slate-400">
                 •
               </span>
-              <time dateTime={post.date}>Published {post.date}</time>
+              <time dateTime={post.date}>Published {formattedDate}</time>
             </div>
             <p className="max-w-[70ch] text-base leading-relaxed text-slate-800">
               {post.excerpt}

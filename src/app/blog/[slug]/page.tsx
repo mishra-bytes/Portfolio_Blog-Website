@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { BlogComments } from "@/components/blog/blog-comments";
 import { CodeBlock } from "@/components/blog/code-block";
 import { GithubFileCard } from "@/components/blog/github-file-card";
+import { PostSlider } from "@/components/blog/post-slider";
 import { SubscribeBanner } from "@/components/blog/subscribe-banner";
 import { formatBlogDate } from "@/lib/format-date";
 import { getAllPosts, getPostBySlug, type ContentBlock } from "@/lib/posts";
@@ -38,12 +39,16 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
           case "paragraph":
             return (
               <p key={key} className="mb-6 text-slate-800">
-                {typeof block.value === "string" ? block.value : block.value.join(" ")}
+                {typeof block.value === "string"
+                  ? block.value
+                  : block.value.join(" ")}
               </p>
             );
           case "heading": {
             const headingText =
-              typeof block.value === "string" ? block.value : block.value.join(" ");
+              typeof block.value === "string"
+                ? block.value
+                : block.value.join(" ");
             const headingId = slugifyHeading(headingText);
             const level = block.level === 3 ? 3 : 2;
 
@@ -69,7 +74,7 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
               </h2>
             );
           }
-          case "code":
+          case "code": {
             const formattedCode =
               typeof block.value === "string"
                 ? block.value.replace(/\\n/g, "\n")
@@ -82,7 +87,8 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
                 language={block.language}
               />
             );
-          case "image":
+          }
+          case "image": {
             if (!block.src) {
               return null;
             }
@@ -114,15 +120,18 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
                 ) : null}
               </figure>
             );
+          }
           case "list":
             return (
               <ul
                 key={key}
                 className="mb-6 list-disc space-y-2 pl-6 text-slate-800 marker:text-blue-600"
               >
-                {(Array.isArray(block.value) ? block.value : [block.value]).map((item) => (
-                  <li key={`${key}-${item}`}>{item}</li>
-                ))}
+                {(Array.isArray(block.value) ? block.value : [block.value]).map(
+                  (item) => (
+                    <li key={`${key}-${item}`}>{item}</li>
+                  ),
+                )}
               </ul>
             );
           case "blockquote":
@@ -131,7 +140,9 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
                 key={key}
                 className="rounded-r-lg border-l-4 border-blue-600 bg-slate-50 py-1 pl-4 italic text-slate-800"
               >
-                {typeof block.value === "string" ? block.value : block.value.join(" ")}
+                {typeof block.value === "string"
+                  ? block.value
+                  : block.value.join(" ")}
               </blockquote>
             );
           case "table": {
@@ -178,7 +189,7 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
                       <tr key={`${key}-row-${rowIndex}`}>
                         {row.map((cell, cellIndex) => (
                           <td
-                          key={`${key}-row-${rowIndex}-cell-${cellIndex}`}
+                            key={`${key}-row-${rowIndex}-cell-${cellIndex}`}
                             className="border-b border-slate-200 py-3 pr-4 text-slate-800"
                           >
                             {cell}
@@ -257,14 +268,31 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     .filter((block) => block.type === "heading")
     .map((block) => ({
       level: block.level === 3 ? 3 : 2,
-      text: typeof block.value === "string" ? block.value : block.value.join(" "),
+      text:
+        typeof block.value === "string" ? block.value : block.value.join(" "),
     }));
 
   const articleUrl = `${process.env.SITE_URL ?? "http://localhost:3000"}/blog/${post.slug}`;
   const formattedDate = formatBlogDate(post.date);
-  const relatedPosts = getAllPosts()
-    .filter((candidate) => candidate.slug !== post.slug)
-    .slice(0, 2);
+  const currentTags = new Set((post.tags ?? []).map((tag) => tag.toLowerCase()));
+  const allPosts = getAllPosts();
+  const otherPosts = allPosts.filter((candidate) => candidate.slug !== post.slug);
+  const recommendedPosts = [...otherPosts]
+    .sort((left, right) => {
+      const leftScore = (left.tags ?? []).reduce((score, tag) => {
+        return score + (currentTags.has(tag.toLowerCase()) ? 1 : 0);
+      }, 0);
+      const rightScore = (right.tags ?? []).reduce((score, tag) => {
+        return score + (currentTags.has(tag.toLowerCase()) ? 1 : 0);
+      }, 0);
+
+      if (leftScore !== rightScore) {
+        return rightScore - leftScore;
+      }
+
+      return new Date(right.date).getTime() - new Date(left.date).getTime();
+    })
+    .slice(0, 5);
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -313,7 +341,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-800">
               <span className="font-medium text-slate-900">By Aditya Mishra</span>
               <span aria-hidden="true" className="text-slate-400">
-                •
+                &bull;
               </span>
               <time dateTime={post.date}>Published {formattedDate}</time>
             </div>
@@ -329,7 +357,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   aria-hidden="true"
                   className="transition-transform group-open:rotate-180"
                 >
-                  ▼
+                  &#9662;
                 </span>
               </summary>
               <ul className="mt-4 space-y-2 text-sm text-slate-600">
@@ -350,46 +378,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </details>
           ) : null}
           <BlockRenderer blocks={post.content} />
-          {relatedPosts.length > 0 ? (
-            <section className="mt-16 border-t border-slate-200 pt-12">
-              <h2 className="mb-8 text-2xl font-bold text-slate-800">
-                Explore more writing
-              </h2>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {relatedPosts.map((relatedPost) => (
-                  <article
-                    key={relatedPost.slug}
-                    className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
-                  >
-                    <div>
-                      <p className="text-sm text-slate-500">
-                        {formatBlogDate(relatedPost.date)}
-                      </p>
-                      <h3 className="mt-3 text-xl font-semibold text-slate-900">
-                        <Link
-                          href={`/blog/${relatedPost.slug}`}
-                          className="transition hover:text-blue-700"
-                        >
-                          {relatedPost.title}
-                        </Link>
-                      </h3>
-                      <p className="mt-3 line-clamp-2 text-sm leading-7 text-slate-600">
-                        {relatedPost.excerpt}
-                      </p>
-                    </div>
-                    <div className="mt-6">
-                      <Link
-                        href={`/blog/${relatedPost.slug}`}
-                        className="inline-flex min-h-11 items-center text-sm font-medium text-blue-700 transition hover:text-blue-800"
-                      >
-                        Read article -&gt;
-                      </Link>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-          ) : null}
+          {otherPosts.length > 0 ? <PostSlider posts={recommendedPosts} /> : null}
           <div className="mx-auto mt-20 max-w-3xl border-t border-gray-200 pt-8">
             <BlogComments slug={slug} />
           </div>

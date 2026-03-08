@@ -289,3 +289,12 @@ a {
 .blog-markdown th {
   background: #eff3f8;
 }
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

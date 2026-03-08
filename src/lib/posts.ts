@@ -29,6 +29,7 @@ export interface BlogPost {
   slug: string;
   date: string;
   excerpt: string;
+  tags?: string[];
   content: ContentBlock[];
 }
 
@@ -90,6 +91,7 @@ export function getAllPosts(): BlogPostSummary[] {
         slug: post.slug,
         date: post.date,
         excerpt: post.excerpt,
+        tags: post.tags ?? [],
       };
     })
     .sort((a, b) => Number(new Date(b.date)) - Number(new Date(a.date)));

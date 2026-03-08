@@ -1,92 +1,45 @@
 "use client";
 
-import { useMemo, useState, type MouseEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type KeyboardEvent,
+  type MouseEvent,
+} from "react";
+import { getSupabaseBrowserClient } from "@/lib/supabaseBrowserClient";
 
 type BlogCommentsProps = {
   slug: string;
 };
 
+type CommentRow = {
+  id: string;
+  slug: string;
+  name: string | null;
+  content: string;
+  created_at: string;
+  parent_id: string | null;
+  upvotes: number | null;
+};
+
 type DiscussionComment = {
   id: string;
+  slug: string;
   name: string;
-  pronoun?: string;
-  date: string;
   content: string;
-  initialUpvotes: number;
-  replies?: DiscussionComment[];
+  created_at: string;
+  parent_id: string | null;
+  upvotes: number;
+  replies: DiscussionComment[];
 };
 
 type CommentItemProps = {
   comment: DiscussionComment;
+  slug: string;
+  onReplySubmitted: () => Promise<void>;
 };
-
-const MOCK_COMMENTS: DiscussionComment[] = [
-  {
-    id: "response-1",
-    name: "Rhea Kapoor",
-    pronoun: "she/her",
-    date: "March 8, 2026",
-    content:
-      "The way you broke down model iteration here feels very grounded in actual engineering practice. I especially liked the emphasis on debugging failure modes before reaching for more complexity in the architecture.",
-    initialUpvotes: 24,
-    replies: [
-      {
-        id: "response-1-reply-1",
-        name: "Neel Roy",
-        date: "March 8, 2026",
-        content:
-          "Agreed. The deployment framing is what made the article useful for me too, especially the emphasis on practical iteration instead of benchmark obsession.",
-        initialUpvotes: 5,
-      },
-      {
-        id: "response-1-reply-2",
-        name: "Sara Khan",
-        pronoun: "she/her",
-        date: "March 8, 2026",
-        content:
-          "I had the same reaction. It reads more like an engineering notebook than a marketing summary, which is rare.",
-        initialUpvotes: 3,
-        replies: [
-          {
-            id: "response-1-reply-2-child-1",
-            name: "Kabir Mehta",
-            date: "March 9, 2026",
-            content:
-              "That nested explanation of tradeoffs was the strongest part for me as well.",
-            initialUpvotes: 2,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "response-2",
-    name: "Arjun Bhatia",
-    pronoun: "he/him",
-    date: "March 7, 2026",
-    content:
-      "This was useful because it tied system behavior back to real deployment constraints instead of treating inference like a notebook-only exercise. I would be curious to read a follow-up on monitoring drift once the pipeline is in production.",
-    initialUpvotes: 17,
-    replies: [
-      {
-        id: "response-2-reply-1",
-        name: "Ananya Das",
-        date: "March 8, 2026",
-        content:
-          "A monitoring follow-up would be strong. Drift and annotation feedback loops are usually where the real pain starts.",
-        initialUpvotes: 4,
-      },
-    ],
-  },
-  {
-    id: "response-3",
-    name: "Maya Singh",
-    date: "March 6, 2026",
-    content:
-      "Clear write-up. The section on practical tradeoffs between latency and robustness made the piece much stronger than a typical project summary, and the examples made it easy to map the ideas back to my own work.",
-    initialUpvotes: 9,
-  },
-];
 
 function ShieldIcon() {
   return (
@@ -164,11 +117,65 @@ function getInitials(name: string) {
     .join("");
 }
 
-function CommentItem({ comment }: CommentItemProps) {
-  const [upvotes, setUpvotes] = useState(comment.initialUpvotes);
+function formatCommentDate(value: string) {
+  return new Intl.DateTimeFormat("en-IN", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
+function buildCommentTree(rows: CommentRow[]) {
+  const nodes = new Map<string, DiscussionComment>();
+  const rootComments: DiscussionComment[] = [];
+
+  for (const row of rows) {
+    nodes.set(row.id, {
+      id: row.id,
+      slug: row.slug,
+      name: row.name?.trim() || "Reader",
+      content: row.content,
+      created_at: row.created_at,
+      parent_id: row.parent_id,
+      upvotes: row.upvotes ?? 0,
+      replies: [],
+    });
+  }
+
+  for (const row of rows) {
+    const node = nodes.get(row.id);
+
+    if (!node) {
+      continue;
+    }
+
+    if (row.parent_id) {
+      const parent = nodes.get(row.parent_id);
+
+      if (parent) {
+        parent.replies.push(node);
+        continue;
+      }
+    }
+
+    rootComments.push(node);
+  }
+
+  return rootComments;
+}
+
+function CommentItem({ comment, slug, onReplySubmitted }: CommentItemProps) {
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
+  const [upvotes, setUpvotes] = useState(comment.upvotes);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
+  const [replyValue, setReplyValue] = useState("");
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false);
+
+  useEffect(() => {
+    setUpvotes(comment.upvotes);
+  }, [comment.upvotes]);
 
   const isLongComment = comment.content.length > 220;
   const visibleContent =
@@ -176,15 +183,74 @@ function CommentItem({ comment }: CommentItemProps) {
       ? `${comment.content.slice(0, 220).trimEnd()}...`
       : comment.content;
 
-  function handleUpvote(event: MouseEvent<HTMLButtonElement>) {
+  async function handleUpvote(event: MouseEvent<HTMLButtonElement>) {
     event.stopPropagation();
     event.preventDefault();
-    setUpvotes((prev) => (hasUpvoted ? prev - 1 : prev + 1));
-    setHasUpvoted(!hasUpvoted);
-    // TODO: Call Supabase RPC here
+
+    const nextHasUpvoted = !hasUpvoted;
+    const incrementVal = nextHasUpvoted ? 1 : -1;
+
+    setUpvotes((prev) => prev + incrementVal);
+    setHasUpvoted(nextHasUpvoted);
+
+    try {
+      const { error } = await supabase.rpc("increment_upvote", {
+        target_id: comment.id,
+        increment_val: incrementVal,
+      });
+
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      setUpvotes((prev) => prev - incrementVal);
+      setHasUpvoted(!nextHasUpvoted);
+      console.error("Failed to update comment upvote:", error);
+    }
   }
 
-  const replyCount = comment.replies?.length ?? 0;
+  async function submitReply() {
+    const content = replyValue.trim();
+
+    if (!content || isSubmittingReply) {
+      return;
+    }
+
+    setIsSubmittingReply(true);
+
+    try {
+      const { error } = await supabase.from("comments").insert({
+        slug,
+        content,
+        parent_id: comment.id,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      setReplyValue("");
+      setIsReplying(false);
+      await onReplySubmitted();
+    } catch (error) {
+      console.error("Failed to submit reply:", error);
+    } finally {
+      setIsSubmittingReply(false);
+    }
+  }
+
+  async function handleReplyKeyDown(
+    event: KeyboardEvent<HTMLInputElement>,
+  ) {
+    if (event.key !== "Enter") {
+      return;
+    }
+
+    event.preventDefault();
+    await submitReply();
+  }
+
+  const replyCount = comment.replies.length;
 
   return (
     <article className="mb-10 border-b border-slate-100 pb-10 last:mb-0 last:border-b-0 last:pb-0">
@@ -197,11 +263,10 @@ function CommentItem({ comment }: CommentItemProps) {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center text-sm">
               <span className="font-medium text-slate-900">{comment.name}</span>
-              {comment.pronoun ? (
-                <span className="ml-1 text-slate-500">{comment.pronoun}</span>
-              ) : null}
             </div>
-            <p className="mt-1 text-sm text-slate-500">{comment.date}</p>
+            <p className="mt-1 text-sm text-slate-500">
+              {formatCommentDate(comment.created_at)}
+            </p>
           </div>
         </div>
 
@@ -214,7 +279,7 @@ function CommentItem({ comment }: CommentItemProps) {
         </button>
       </div>
 
-      <p className="mt-4 text-slate-800 leading-relaxed">
+      <p className="mt-4 leading-relaxed text-slate-800">
         {visibleContent}{" "}
         {isLongComment && !isExpanded ? (
           <button
@@ -249,7 +314,7 @@ function CommentItem({ comment }: CommentItemProps) {
 
         <button
           type="button"
-          onClick={() => setIsReplying(!isReplying)}
+          onClick={() => setIsReplying((current) => !current)}
           className="min-h-11 font-medium transition-colors hover:text-slate-800"
         >
           Reply
@@ -261,17 +326,26 @@ function CommentItem({ comment }: CommentItemProps) {
           <div className="h-8 w-8 shrink-0 rounded-full bg-slate-200" />
           <input
             type="text"
+            value={replyValue}
+            onChange={(event) => setReplyValue(event.target.value)}
+            onKeyDown={handleReplyKeyDown}
             placeholder="Write a reply..."
             className="flex-grow rounded-lg border border-slate-100 bg-slate-50 p-2 text-sm text-slate-700 outline-none transition-colors focus:border-slate-300"
             autoFocus
+            disabled={isSubmittingReply}
           />
         </div>
       ) : null}
 
-      {comment.replies && comment.replies.length > 0 ? (
+      {comment.replies.length > 0 ? (
         <div className="mt-6 ml-6 space-y-6 border-l-2 border-slate-100 pl-4 md:ml-10 md:pl-6">
           {comment.replies.map((reply) => (
-            <CommentItem key={reply.id} comment={reply} />
+            <CommentItem
+              key={reply.id}
+              comment={reply}
+              slug={slug}
+              onReplySubmitted={onReplySubmitted}
+            />
           ))}
         </div>
       ) : null}
@@ -280,9 +354,41 @@ function CommentItem({ comment }: CommentItemProps) {
 }
 
 export function BlogComments({ slug }: BlogCommentsProps) {
-  void slug;
+  const supabase = useMemo(() => getSupabaseBrowserClient(), []);
+  const [comments, setComments] = useState<CommentRow[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUnavailable, setIsUnavailable] = useState(false);
 
-  const responses = useMemo(() => MOCK_COMMENTS, []);
+  const loadComments = useCallback(async () => {
+    setIsLoading(true);
+    setIsUnavailable(false);
+
+    try {
+      const { data, error } = await supabase
+        .from("comments")
+        .select("id, slug, name, content, created_at, parent_id, upvotes")
+        .eq("slug", slug)
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+
+      setComments((data ?? []) as CommentRow[]);
+    } catch (error) {
+      console.error("Failed to load comments:", error);
+      setIsUnavailable(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [slug, supabase]);
+
+  useEffect(() => {
+    void loadComments();
+  }, [loadComments]);
+
+  const rootComments = useMemo(() => buildCommentTree(comments), [comments]);
+  const totalResponses = comments.length;
 
   return (
     <section aria-labelledby="responses-heading">
@@ -291,7 +397,7 @@ export function BlogComments({ slug }: BlogCommentsProps) {
           id="responses-heading"
           className="text-2xl font-bold text-slate-900"
         >
-          Responses (192)
+          Responses ({totalResponses})
         </h2>
         <div className="text-slate-400" aria-hidden="true">
           <ShieldIcon />
@@ -306,9 +412,26 @@ export function BlogComments({ slug }: BlogCommentsProps) {
       </div>
 
       <div className="mt-12">
-        {responses.map((comment) => (
-          <CommentItem key={comment.id} comment={comment} />
-        ))}
+        {isLoading ? (
+          <div className="text-sm text-slate-500">Loading responses...</div>
+        ) : isUnavailable ? (
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-center text-slate-500">
+            Comments are temporarily unavailable.
+          </div>
+        ) : rootComments.length === 0 ? (
+          <div className="text-sm text-slate-500">
+            No responses yet. Start the discussion.
+          </div>
+        ) : (
+          rootComments.map((comment) => (
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              slug={slug}
+              onReplySubmitted={loadComments}
+            />
+          ))
+        )}
       </div>
     </section>
   );

@@ -40,7 +40,7 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
       <button
         type="button"
         onClick={copyToClipboard}
-        className="absolute top-3 right-3 rounded-md bg-white/10 px-2 py-1 text-xs font-medium text-slate-100 transition-all hover:bg-white/20"
+        className="absolute top-3 right-3 inline-flex min-h-11 min-w-11 items-center justify-center rounded-md bg-white/10 px-3 py-2 text-xs font-medium text-slate-100 transition-all hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
         aria-label={isCopied ? "Code copied to clipboard" : "Copy code to clipboard"}
       >
         {isCopied ? "Copied! \u2713" : "Copy"}

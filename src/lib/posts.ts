@@ -15,6 +15,9 @@ export interface ContentBlock {
   value: string | string[];
   language?: string;
   src?: string;
+  level?: 2 | 3;
+  width?: number;
+  height?: number;
 }
 
 export interface BlogPost {

@@ -16,28 +16,57 @@ type BlockRendererProps = {
   blocks: ContentBlock[];
 };
 
+function slugifyHeading(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-");
+}
+
 function BlockRenderer({ blocks }: BlockRendererProps) {
+  const firstImageIndex = blocks.findIndex((block) => block.type === "image");
+
   return (
-    <div className="mx-auto mt-10 max-w-3xl space-y-6 text-base leading-8 text-slate-700 sm:text-lg sm:leading-9">
+    <div className="mx-auto mt-10 max-w-[70ch] space-y-6 text-base leading-relaxed text-slate-800 sm:text-lg">
       {blocks.map((block, index) => {
         const key = `${index}-${block.type}`;
 
         switch (block.type) {
           case "paragraph":
             return (
-              <p key={key} className="text-slate-700">
+              <p key={key} className="mb-6 text-slate-800">
                 {typeof block.value === "string" ? block.value : block.value.join(" ")}
               </p>
             );
-          case "heading":
+          case "heading": {
+            const headingText =
+              typeof block.value === "string" ? block.value : block.value.join(" ");
+            const headingId = slugifyHeading(headingText);
+            const level = block.level === 3 ? 3 : 2;
+
+            if (level === 3) {
+              return (
+                <h3
+                  key={key}
+                  id={headingId}
+                  className="pt-4 text-2xl font-semibold tracking-[-0.03em] text-slate-900"
+                >
+                  {headingText}
+                </h3>
+              );
+            }
+
             return (
               <h2
                 key={key}
-                className="pt-4 text-3xl font-semibold tracking-[-0.04em] text-slate-900"
+                id={headingId}
+                className="pt-6 text-3xl font-semibold tracking-[-0.04em] text-slate-900"
               >
-                {typeof block.value === "string" ? block.value : block.value.join(" ")}
+                {headingText}
               </h2>
             );
+          }
           case "code":
             const formattedCode =
               typeof block.value === "string"
@@ -56,15 +85,24 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
               return null;
             }
 
+            const width = block.width ?? 1600;
+            const height = block.height ?? 900;
+            const altText =
+              typeof block.value === "string" ? block.value : "Blog image";
+
             return (
               <figure key={key} className="space-y-3">
-                <div className="relative aspect-video overflow-hidden rounded-[1.5rem] border border-slate-200 bg-slate-100">
+                <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-slate-100">
                   <Image
                     src={block.src}
-                    alt={typeof block.value === "string" ? block.value : "Blog image"}
-                    fill
+                    alt={altText}
+                    width={width}
+                    height={height}
+                    priority={index === firstImageIndex && firstImageIndex !== -1}
+                    loading={index === firstImageIndex ? undefined : "lazy"}
+                    decoding="async"
                     sizes="(max-width: 768px) 100vw, 768px"
-                    className="object-cover"
+                    className="h-auto w-full object-cover"
                   />
                 </div>
                 {typeof block.value === "string" && block.value.length > 0 ? (
@@ -78,7 +116,7 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
             return (
               <ul
                 key={key}
-                className="list-disc space-y-2 pl-6 text-slate-700 marker:text-blue-600"
+                className="mb-6 list-disc space-y-2 pl-6 text-slate-800 marker:text-blue-600"
               >
                 {(Array.isArray(block.value) ? block.value : [block.value]).map((item) => (
                   <li key={`${key}-${item}`}>{item}</li>
@@ -89,7 +127,7 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
             return (
               <blockquote
                 key={key}
-                className="rounded-r-lg border-l-4 border-blue-600 bg-slate-50 py-1 pl-4 italic text-slate-700"
+                className="rounded-r-lg border-l-4 border-blue-600 bg-slate-50 py-1 pl-4 italic text-slate-800"
               >
                 {typeof block.value === "string" ? block.value : block.value.join(" ")}
               </blockquote>
@@ -138,8 +176,8 @@ function BlockRenderer({ blocks }: BlockRendererProps) {
                       <tr key={`${key}-row-${rowIndex}`}>
                         {row.map((cell, cellIndex) => (
                           <td
-                            key={`${key}-row-${rowIndex}-cell-${cellIndex}`}
-                            className="border-b border-slate-200 py-3 pr-4 text-slate-600"
+                          key={`${key}-row-${rowIndex}-cell-${cellIndex}`}
+                            className="border-b border-slate-200 py-3 pr-4 text-slate-800"
                           >
                             {cell}
                           </td>
@@ -200,12 +238,39 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound();
   }
 
+  const headings = post.content
+    .filter((block) => block.type === "heading")
+    .map((block) => ({
+      level: block.level === 3 ? 3 : 2,
+      text: typeof block.value === "string" ? block.value : block.value.join(" "),
+    }));
+
+  const articleUrl = `${process.env.SITE_URL ?? "http://localhost:3000"}/blog/${post.slug}`;
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    author: {
+      "@type": "Person",
+      name: "Aditya Mishra",
+    },
+    datePublished: post.date,
+    mainEntityOfPage: articleUrl,
+    description: post.excerpt,
+  };
+
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 py-0">
+      <a
+        href="#article-content"
+        className="sr-only rounded-md bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50"
+      >
+        Skip to content
+      </a>
       <nav aria-label="Back to blog" className="pt-5 sm:pt-6">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 rounded-full border border-[#d7dee7] bg-white px-3.5 py-2 text-sm font-medium text-[#334155] shadow-sm transition-all duration-200 hover:border-[#93c5fd] hover:text-blue-700 hover:shadow-md"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#d7dee7] bg-white px-4 py-2.5 text-sm font-medium text-[#334155] shadow-sm transition-all duration-200 hover:border-[#93c5fd] hover:text-blue-700 hover:shadow-md"
         >
           <span aria-hidden="true" className="text-base leading-none">
             &larr;
@@ -213,19 +278,52 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <span>Back to Blog</span>
         </Link>
       </nav>
-      <article className="blog-panel rounded-[2rem] px-6 py-10 sm:px-10 sm:py-12">
-        <div className="mx-auto max-w-3xl">
+      <article
+        id="article-content"
+        className="blog-panel rounded-[2rem] px-6 py-10 sm:px-10 sm:py-12"
+      >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        <div className="mx-auto max-w-[70ch]">
           <header className="space-y-5 border-b blog-divider pb-8 text-left">
-            <div className="text-xs uppercase tracking-[0.3em] text-[#4b5563]">
-              <span>{post.date}</span>
-            </div>
-            <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.05em] text-[#0f172a] sm:text-5xl">
+            <h1 className="max-w-[18ch] text-4xl font-semibold tracking-[-0.05em] text-[#0f172a] sm:text-5xl">
               {post.title}
             </h1>
-            <p className="max-w-3xl text-base leading-8 text-[#374151]">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-800">
+              <span className="font-medium text-slate-900">By Aditya Mishra</span>
+              <span aria-hidden="true" className="text-slate-400">
+                •
+              </span>
+              <time dateTime={post.date}>Published {post.date}</time>
+            </div>
+            <p className="max-w-[70ch] text-base leading-relaxed text-slate-800">
               {post.excerpt}
             </p>
           </header>
+          {headings.length > 0 ? (
+            <aside className="mt-8 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-600">
+                Table of Contents
+              </p>
+              <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-800">
+                {headings.map((heading) => (
+                  <li
+                    key={`${heading.level}-${heading.text}`}
+                    className={heading.level === 3 ? "pl-4" : undefined}
+                  >
+                    <a
+                      href={`#${slugifyHeading(heading.text)}`}
+                      className="inline-flex min-h-11 items-center text-left font-medium text-slate-800 transition hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200"
+                    >
+                      {heading.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </aside>
+          ) : null}
           <BlockRenderer blocks={post.content} />
           <div className="mx-auto mt-16 max-w-3xl border-t border-gray-200 pt-8">
             <BlogComments slug={slug} />

@@ -20,12 +20,12 @@ export const contactItems = [
   {
     label: "LinkedIn",
     value: "LinkedIn",
-    href: undefined,
+    href: "https://www.linkedin.com/in/aditya-mishra-bb44ab2b9",
   },
   {
     label: "GitHub",
     value: "GitHub",
-    href: undefined,
+    href: "https://github.com/mishra-bytes",
   },
 ] as const;
 
